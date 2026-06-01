@@ -784,11 +784,18 @@ function jdTailorAI(jd,lim,exp){
   var obj;try{obj=JSON.parse(t);}catch(e){obj=null;}
   if(!obj||typeof obj!=="object")obj={keywords:[],bullets:[]};
   if(!obj.keywords||!obj.keywords.length)obj.keywords=[];
-  if(!obj.bullets||!obj.bullets.length){
-    // 兜底:把纯文本按行/分号拆成 bullet
-    obj.bullets=t.split(/\n+|;|；/).map(function(s){return s.replace(/^[·\-\d\.\s、]+/,"").trim();}).filter(function(s){return s.length>3;});
-  }
-  obj.bullets=(obj.bullets||[]).map(function(b){return (b||"").replace(/\s+/g," ").trim();}).filter(Boolean);
+  var rawb=(obj.bullets&&obj.bullets.length)?obj.bullets:[t];
+  // 不管 AI 给的是 bullet 还是一整段,统一按句号/分号强制拆成条目
+  var split=[];
+  rawb.forEach(function(b){String(b||"").split(/[；;。\n]+/).forEach(function(s){split.push(s);});});
+  split=split.map(function(s){return s.replace(/^[·\-\d\.\s、]+/,"").replace(/\s+/g," ").trim();})
+    .filter(function(s){return s.length>4;})
+    // 删掉求职信式自我评价句
+    .filter(function(s){return !/(可迁移|迁移至|可胜任|相关能力|具备[^,，]{0,14}能力)/.test(s);});
+  // 真正按字数上限截断(AI 经常无视)
+  var total=0,kept=[];
+  for(var k=0;k<split.length;k++){var L=split[k].length;if(kept.length>0&&total+L>lim)break;kept.push(split[k]);total+=L;}
+  obj.bullets=kept;
   if(!obj.bullets.length)throw new Error("空结果");
   return obj;
  });
@@ -815,6 +822,16 @@ function exSynthAI(recs,lim){
   t=t.replace(/^```(json)?/i,"").replace(/```$/,"").trim();
   var obj=JSON.parse(t);
   if(!obj||!obj.sections||!obj.sections.length)throw new Error("空结果");
+  // 真正按总字数上限截断(AI 经常无视上限,会超很多)
+  var total=0,out=[];
+  for(var s=0;s<obj.sections.length;s++){
+    var sec=obj.sections[s],bs=[];
+    var arr=(sec.bullets||[]);
+    for(var b=0;b<arr.length;b++){var txt=(arr[b]||"").trim();if(!txt)continue;var L=txt.length;if(total>0&&total+L>lim){break;}bs.push(txt);total+=L;}
+    if(bs.length)out.push({theme:sec.theme,bullets:bs});
+    if(total>=lim)break;
+  }
+  if(out.length)obj.sections=out;
   return obj;
  });
 }
