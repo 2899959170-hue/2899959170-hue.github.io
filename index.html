@@ -370,6 +370,12 @@ textarea::placeholder{color:var(--dim);}
 .gfree{display:inline-block;font-size:11px;font-weight:700;color:var(--sage);background:var(--sage-bg);
   border:1px solid var(--sage-line);border-radius:20px;padding:4px 12px;margin-top:12px;}
 .gnote{font-size:11.5px;color:var(--dim);line-height:1.65;margin-top:12px;}
+#codeBtn{font-size:17px;padding:17px 24px;border-radius:14px;letter-spacing:1px;
+  background:linear-gradient(135deg,#F2845C 0%,var(--koi) 55%,var(--koi-deep) 100%);
+  box-shadow:0 12px 26px -8px rgba(224,105,74,.75);animation:codepulse 1.9s ease-in-out infinite;}
+#codeBtn:hover{filter:brightness(1.04);}
+@keyframes codepulse{0%,100%{transform:scale(1);box-shadow:0 12px 26px -8px rgba(224,105,74,.6);}
+  50%{transform:scale(1.025);box-shadow:0 16px 32px -8px rgba(224,105,74,.9);}}
 
 /* ── 底部插播广告(陪跑获客) ── */
 /* ── 团队介绍 ── */
