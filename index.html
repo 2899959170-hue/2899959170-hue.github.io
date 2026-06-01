@@ -1187,7 +1187,7 @@ function codeOK(raw){var c=(raw||"").trim().toUpperCase().replace(/\s/g,"");
  return c===mint(c.slice(0,4));}
 function unlocked(){try{return localStorage.getItem(UKEY)==="1";}catch(e){return false;}}
 /* 轻量计数器:每台设备首次解锁(非演示码)给计数器 +1,刷新不重复计 */
-var CNT_NS="jinli-koi-stat-2026",CNT_KEY="shixi-koi-counted";
+var CNT_NS="jinli-koi-live-0601",CNT_KEY="shixi-koi-counted";
 function countUnlock(){try{if(localStorage.getItem(CNT_KEY)==="1")return;localStorage.setItem(CNT_KEY,"1");
   var im=new Image();im.src="https://api.counterapi.dev/v1/"+CNT_NS+"/unlock/up?_="+Date.now();}catch(e){}}
 function tryCode(){var raw=document.getElementById("codeInput").value;

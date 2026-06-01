@@ -29,7 +29,7 @@
  </div>
  <div class="note">说明:同一台手机第一次解锁才算 1 个人,刷新/再次打开不会重复计。这是轻量统计,看不到具体是哪个邀请码;想看每个码的明细需要做后端。</div>
 <script>
-var NS="jinli-koi-stat-2026";
+var NS="jinli-koi-live-0601";
 function load(){
  var el=document.getElementById("num");el.textContent="读取中…";el.className="num load";
  fetch("https://api.counterapi.dev/v1/"+NS+"/unlock/?_="+Date.now())
