@@ -965,7 +965,7 @@ function renderToday(){
    '<div class="setnote">🔒 Key 只存在你自己浏览器的 localStorage,不会写进文件、不上传任何第三方。开源版本不含任何 key,每个人填自己的。去 <b>platform.deepseek.com</b> 免费申请。请求直接发给 DeepSeek 官方接口。</div>'+
   '</div>':'';
  panel.innerHTML=
-  '<div class="datestrip"><span class="dsdate">📅 今天 '+dateStr+'</span>'+(demo?'<span class="dsright"><a class="dsset" id="setToggle">⚙️ AI'+(aiOn?' ●':'')+'</a><a class="dsdemo" id="demoFill">🎬 演示填充</a></span>':'')+'</div>'+
+  '<div class="datestrip"><span class="dsdate">📅 今天 '+dateStr+'</span>'+(demo?'<span class="dsright"><a class="dsset" id="setToggle">⚙️ AI'+(aiOn?' ●':'')+'</a><a class="dsdemo" id="demoFill">🎬 演示填充</a><a class="dsdemo" id="backGate">🔙 回邀请码页</a></span>':'')+'</div>'+
   setHtml+
   demoEx+
   '<div class="card">'+editbar+
@@ -982,6 +982,7 @@ function renderToday(){
  q2.addEventListener("input",function(){document.getElementById("askflag").style.display=q2.value.trim()?"none":"flex";});
  document.getElementById("goTranslate").addEventListener("click",doTranslate);
  var df=document.getElementById("demoFill");if(df)df.addEventListener("click",demoFill);
+ var bg=document.getElementById("backGate");if(bg)bg.addEventListener("click",relock);
  var st=document.getElementById("setToggle");if(st)st.addEventListener("click",function(){state.showSet=!state.showSet;renderToday();});
  var ss=document.getElementById("setSave");if(ss)ss.addEventListener("click",function(){state.apiKey=val("setKey").trim();state.useAI=document.getElementById("setUse").checked;persistAI();renderToday();toast(state.useAI&&state.apiKey?"已开启 AI 翻译":(state.useAI?"勾了 AI 但没填 Key,先用本地规则":"已保存,使用本地规则"));});
  var sc=document.getElementById("setClr");if(sc)sc.addEventListener("click",function(){state.apiKey="";state.useAI=false;persistAI();renderToday();toast("已清除 Key");});
@@ -1400,7 +1401,14 @@ function tryCode(){var raw=document.getElementById("codeInput").value;
   var g=document.getElementById("gate");g.style.opacity="0";setTimeout(function(){g.style.display="none";},350);
   toast(isDemo?"演示版已解锁 🐉":"解锁成功 · 开始攒锦鲤 🧧");}
  else{document.getElementById("codeErr").textContent="邀请码不对~ 关注作者回复「上岸」领一个 →";}}
-function openGate(){var g=document.getElementById("gate");g.style.display="flex";
+/* 回到邀请码门页(管理员/演示用,数据保留,只是重新锁上展示门页) */
+function relock(){try{localStorage.removeItem(UKEY);}catch(e){}
+ var ci=document.getElementById("codeInput");if(ci)ci.value="";
+ var ce=document.getElementById("codeErr");if(ce)ce.textContent="";
+ openGate();window.scrollTo(0,0);}
+var _gateBound=false;
+function openGate(){var g=document.getElementById("gate");g.style.display="flex";g.style.opacity="1";
+ if(_gateBound)return;_gateBound=true;
  document.getElementById("codeBtn").addEventListener("click",tryCode);
  document.getElementById("codeInput").addEventListener("keydown",function(e){if(e.key==="Enter")tryCode();});}
 
