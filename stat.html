@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>锦鲤 · 用户统计</title>
+<style>
+ *{box-sizing:border-box}
+ body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#FAF5EC;color:#2B2722;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
+ h1{font-size:18px;margin:0 0 4px;}
+ .sub{font-size:12.5px;color:#9A8F7E;margin-bottom:22px;}
+ .card{background:#fff;border:1px solid #E3D8C5;border-radius:18px;padding:30px 40px;text-align:center;box-shadow:0 8px 24px rgba(180,150,100,.12);min-width:240px;}
+ .label{font-size:13px;color:#9A8F7E;margin-bottom:8px;}
+ .num{font-size:54px;font-weight:800;color:#E0694A;line-height:1.1;}
+ .num.load{font-size:22px;color:#C9BCA6;}
+ .since{font-size:11.5px;color:#B3A793;margin-top:10px;}
+ button{margin-top:22px;border:none;border-radius:10px;padding:9px 20px;font-size:13.5px;font-weight:700;background:#fff;border:1px solid #E3D8C5;color:#9A8F7E;cursor:pointer;font-family:inherit;}
+ .note{font-size:11.5px;color:#B3A793;margin-top:18px;max-width:300px;line-height:1.7;text-align:center;}
+</style>
+</head>
+<body>
+ <h1>🧧 锦鲤 · 用户统计</h1>
+ <div class="sub">已解锁使用的学员数(按设备去重)</div>
+ <div class="card">
+  <div class="label">累计解锁人数</div>
+  <div class="num load" id="num">读取中…</div>
+  <div class="since" id="since"></div>
+  <button id="refresh">🔄 刷新</button>
+ </div>
+ <div class="note">说明:同一台手机第一次解锁才算 1 个人,刷新/再次打开不会重复计。这是轻量统计,看不到具体是哪个邀请码;想看每个码的明细需要做后端。</div>
+<script>
+var NS="jinli-koi-stat-2026";
+function load(){
+ var el=document.getElementById("num");el.textContent="读取中…";el.className="num load";
+ fetch("https://api.counterapi.dev/v1/"+NS+"/unlock/?_="+Date.now())
+  .then(function(r){return r.json();})
+  .then(function(d){
+    var c=(d&&typeof d.count==="number")?d.count:0;
+    el.textContent=c;el.className="num";
+    if(d&&d.created_at){document.getElementById("since").textContent="自 "+d.created_at.slice(0,10)+" 起统计";}
+  })
+  .catch(function(){el.textContent="读取失败,点刷新重试";el.className="num load";});
+}
+document.getElementById("refresh").addEventListener("click",load);
+load();
+</script>
+</body>
+</html>

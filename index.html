@@ -1186,13 +1186,17 @@ function codeOK(raw){var c=(raw||"").trim().toUpperCase().replace(/\s/g,"");
  if(!/^[A-Z0-9]{6}$/.test(c))return false;
  return c===mint(c.slice(0,4));}
 function unlocked(){try{return localStorage.getItem(UKEY)==="1";}catch(e){return false;}}
+/* 轻量计数器:每台设备首次解锁(非演示码)给计数器 +1,刷新不重复计 */
+var CNT_NS="jinli-koi-stat-2026",CNT_KEY="shixi-koi-counted";
+function countUnlock(){try{if(localStorage.getItem(CNT_KEY)==="1")return;localStorage.setItem(CNT_KEY,"1");
+  var im=new Image();im.src="https://api.counterapi.dev/v1/"+CNT_NS+"/unlock/up?_="+Date.now();}catch(e){}}
 function tryCode(){var raw=document.getElementById("codeInput").value;
  var c=(raw||"").trim().toUpperCase().replace(/\s/g,"");
  var isDemo=(c===DEMO_CODE);
  if(isDemo||codeOK(c)){
   try{localStorage.setItem(UKEY,"1");localStorage.setItem(CKEY,c);}catch(e){}
   if(isDemo){try{localStorage.setItem(DKEY,"1");}catch(e){}load();if(state.entries.length===0)loadDemoData();}
-  else{try{localStorage.removeItem(DKEY);}catch(e){}load();}
+  else{try{localStorage.removeItem(DKEY);}catch(e){}load();countUnlock();}
   syncStats();render();
   var g=document.getElementById("gate");g.style.opacity="0";setTimeout(function(){g.style.display="none";},350);
   toast(isDemo?"演示版已解锁 🐉":"解锁成功 · 开始攒锦鲤 🧧");}
