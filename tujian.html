@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>实习翻译机 · 功能图鉴</title>
+<style>
+:root{
+ --bg:#FAF5EC;--surface:#fff;--surface-2:#FBF6EE;--ink:#2B2722;--ink-2:#4A463F;
+ --koi:#E0694A;--koi-deep:#C24E32;--koi-line:#EAD2C5;--sage:#5E7A63;--sage-bg:#EDF2EC;--sage-line:#CFE0CF;
+ --dim:#9A8F7E;--muted:#B3A793;--border:#E8DECB;--border-strong:#DCCEB4;
+ --serif:"Noto Serif SC",ui-serif,Georgia,"Songti SC",serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;}
+.wrap{max-width:720px;margin:0 auto;padding:0 18px 60px;}
+.serif{font-family:var(--serif);}
+/* hero */
+.hero{text-align:center;padding:40px 18px 26px;position:relative;overflow:hidden;}
+.hero .seal{display:inline-block;font-family:var(--serif);font-weight:700;color:#fff;background:var(--koi);border-radius:8px;padding:3px 12px;font-size:12.5px;letter-spacing:.12em;margin-bottom:14px;box-shadow:0 8px 18px -10px rgba(224,105,74,.7);}
+.hero h1{font-family:var(--serif);font-size:30px;margin:6px 0 8px;letter-spacing:.02em;}
+.hero h1 em{font-style:normal;color:var(--koi);}
+.hero p{color:var(--dim);font-size:14px;max-width:460px;margin:0 auto;}
+.herofish{margin:10px auto 2px;width:170px;}
+/* section */
+section{margin-top:40px;}
+.shd{display:flex;align-items:baseline;gap:10px;margin-bottom:6px;}
+.shd .no{font-family:var(--serif);font-size:13px;font-weight:700;color:#fff;background:var(--koi);border-radius:7px;padding:2px 9px;}
+.shd h2{font-family:var(--serif);font-size:22px;margin:0;}
+.sdesc{color:var(--dim);font-size:13px;margin:0 0 16px;padding-left:2px;}
+/* 锦鲤图鉴 */
+.koigrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:540px){.koigrid{grid-template-columns:1fr;}}
+.koicard{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px 16px 14px;position:relative;box-shadow:0 10px 26px -22px rgba(180,140,90,.6);}
+.koicard.drag{border-color:#E7C98F;background:linear-gradient(170deg,#FFFBEF,#FBF4DD);}
+.koicard .lv{font-size:11px;font-weight:700;color:var(--sage);background:var(--sage-bg);border:1px solid var(--sage-line);border-radius:20px;padding:2px 9px;display:inline-block;}
+.koicard.drag .lv{color:#B8851E;background:#FBF0CF;border-color:#EBD9A6;}
+.koicard .fishbox{height:78px;display:flex;align-items:center;justify-content:center;margin:6px 0 4px;}
+.koicard .nm{font-family:var(--serif);font-size:18px;font-weight:700;margin-top:4px;}
+.koicard .cond{font-size:12.5px;color:var(--dim);margin-top:3px;}
+.koicard .tag{position:absolute;top:14px;right:14px;font-size:18px;}
+/* 鸡汤图鉴 */
+.probbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+.pill{font-size:12px;border-radius:20px;padding:5px 12px;font-weight:600;border:1px solid var(--border-strong);background:var(--surface);color:var(--ink-2);}
+.pill b{color:var(--koi-deep);}
+.souplist{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:6px 4px;box-shadow:0 10px 26px -22px rgba(180,140,90,.6);}
+.soup{display:flex;gap:10px;padding:10px 12px;border-bottom:1px dashed var(--border);font-size:14px;}
+.soup:last-child{border-bottom:none;}
+.soup .idx{font-family:var(--serif);font-size:12px;color:var(--muted);flex:none;width:26px;text-align:right;padding-top:2px;}
+.soup .txt{flex:1;color:var(--ink);}
+.soup .pc{flex:none;font-size:11px;color:var(--sage);align-self:center;}
+/* 签名 */
+.signs{display:flex;flex-wrap:wrap;gap:9px;}
+.sign{font-family:var(--serif);font-size:14px;font-weight:600;color:var(--koi-deep);background:var(--surface);border:1px solid var(--koi-line);border-radius:11px;padding:7px 14px;box-shadow:0 6px 14px -12px rgba(224,105,74,.6);}
+/* 里程碑 */
+.miles{position:relative;padding-left:26px;}
+.miles:before{content:"";position:absolute;left:9px;top:6px;bottom:6px;width:2px;background:var(--koi-line);}
+.mile{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:13px 15px;margin-bottom:12px;box-shadow:0 8px 22px -20px rgba(180,140,90,.6);}
+.mile:before{content:"";position:absolute;left:-21px;top:18px;width:11px;height:11px;border-radius:50%;background:var(--koi);border:2px solid #fff;box-shadow:0 0 0 2px var(--koi-line);}
+.mile .n{font-family:var(--serif);font-weight:700;font-size:15px;color:var(--koi-deep);}
+.mile .m{font-size:13.5px;color:var(--ink-2);margin-top:4px;}
+/* 彩蛋 */
+.eggs{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:540px){.eggs{grid-template-columns:1fr;}}
+.egg{background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:14px 15px;box-shadow:0 8px 22px -20px rgba(180,140,90,.6);}
+.egg .e{font-size:22px;}
+.egg .t{font-family:var(--serif);font-weight:700;font-size:15px;margin:6px 0 4px;}
+.egg .d{font-size:12.8px;color:var(--dim);}
+/* 功能体系 */
+.feats{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:540px){.feats{grid-template-columns:1fr;}}
+.feat{background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:15px;box-shadow:0 8px 22px -20px rgba(180,140,90,.6);}
+.feat .fi{font-size:20px;}
+.feat .ft{font-family:var(--serif);font-weight:700;font-size:15.5px;margin:7px 0 5px;}
+.feat .fd{font-size:13px;color:var(--ink-2);}
+/* cta */
+.cta{margin-top:46px;text-align:center;background:linear-gradient(170deg,#FCF1EA,#FBF6EE);border:1px solid var(--koi-line);border-radius:20px;padding:30px 22px;}
+.cta h3{font-family:var(--serif);font-size:20px;margin:0 0 8px;}
+.cta p{color:var(--dim);font-size:13.5px;margin:0 0 18px;}
+.cta a{display:inline-block;text-decoration:none;font-weight:700;color:#fff;background:linear-gradient(135deg,#F2845C,var(--koi) 55%,var(--koi-deep));border-radius:14px;padding:14px 30px;font-size:16px;box-shadow:0 12px 26px -8px rgba(224,105,74,.7);}
+.foot{text-align:center;color:var(--muted);font-size:11.5px;margin-top:26px;}
+</style>
+</head>
+<body>
+<div class="hero">
+ <span class="seal">功 能 图 鉴</span>
+ <div class="herofish" id="heroFish"></div>
+ <h1>实习<em>翻译机</em> · 锦鲤图鉴</h1>
+ <p>把每天的杂活,翻译成扛得住追问的简历真东西。这是它的全部玩法、彩蛋与隐藏惊喜。</p>
+</div>
+<div class="wrap">
+
+ <section>
+  <div class="shd"><span class="no">壹</span><h2>锦鲤图鉴 · 6 段进化</h2></div>
+  <p class="sdesc">每攒下一条真东西,锦鲤就更神气一点。攒满 30 条,它会化龙 🐉。皮肤随等级真实换色。</p>
+  <div class="koigrid" id="koiGrid"></div>
+ </section>
+
+ <section>
+  <div class="shd"><span class="no">贰</span><h2>鸡汤图鉴 · 50 条</h2></div>
+  <p class="sdesc">每次成功投喂,结果卡片会随机抽一句鼓励给你——像求签。下面是全部签文与触发概率。</p>
+  <div class="probbar">
+   <span class="pill">普通投喂随机出 · 每条约 <b>2%</b> (1/50 等概率)</span>
+   <span class="pill">里程碑条数 → 必出对应文案</span>
+   <span class="pill">锦鲤进阶 → 必出升级文案</span>
+  </div>
+  <div class="souplist" id="soupList"></div>
+ </section>
+
+ <section>
+  <div class="shd"><span class="no">叁</span><h2>签名图鉴 · 16 签</h2></div>
+  <p class="sdesc">每句鸡汤都会随机配一个"签名",约 <b>6.25%</b> (1/16) 等概率,凑齐全部纯靠缘分。</p>
+  <div class="signs" id="signBox"></div>
+ </section>
+
+ <section>
+  <div class="shd"><span class="no">肆</span><h2>里程碑图鉴 · 11 档</h2></div>
+  <p class="sdesc">攒到这些条数会触发专属里程碑文案,替代当次随机鸡汤,签名显示「里程碑 🎉」。</p>
+  <div class="miles" id="mileBox"></div>
+ </section>
+
+ <section>
+  <div class="shd"><span class="no">伍</span><h2>彩蛋揭秘</h2></div>
+  <p class="sdesc">藏在工具里的小惊喜,知道的人会会心一笑。</p>
+  <div class="eggs" id="eggBox"></div>
+ </section>
+
+ <section>
+  <div class="shd"><span class="no">陆</span><h2>完整功能体系</h2></div>
+  <p class="sdesc">一张图看懂它能帮你做什么——从记录,到简历,到面试。</p>
+  <div class="feats" id="featBox"></div>
+ </section>
+
+ <div class="cta">
+  <h3>每天一分钟,攒一条上岸的底气</h3>
+  <p>工具免费 · 凭邀请码解锁 · 数据存你自己手机本地</p>
+  <a href="https://2899959170-hue.github.io/" target="_blank" rel="noopener">去攒我的锦鲤池 →</a>
+ </div>
+ <div class="foot">实习翻译机 · 锦鲤版 · 本页为功能图鉴,可截图发小红书 🧧</div>
+</div>
+
+<script>
+/* ===== 与主工具同款锦鲤调色板 & SVG ===== */
+var KPAL=[
+ {b1:"#FFFFFF",b2:"#F7F0E5",patch:"#EEC2AC",accent:"#EEC2AC",light:"#F8DECF",whisk:"#D8C3AE"},
+ {b1:"#FFFFFF",b2:"#F3EAD9",patch:"#E0694A",accent:"#E0694A",light:"#F6D6C7",whisk:"#C9A98F"},
+ {b1:"#FFF6F2",b2:"#F0D6CA",patch:"#D2452B",accent:"#D2452B",light:"#F0C4B4",whisk:"#C9A98F"},
+ {b1:"#FFFDF4",b2:"#F1E5C2",patch:"#C0922F",accent:"#C0922F",light:"#EBD9A6",whisk:"#B89A4E"},
+ {b1:"#FFFBEF",b2:"#F3E2BB",patch:"#C0922F",accent:"#C24E32",light:"#F0CBA6",whisk:"#B89A4E"},
+ {b1:"#FFF7E2",b2:"#E9D293",patch:"#B8851E",accent:"#8A3D12",light:"#E7C98F",whisk:"#8A6B1E"}
+];
+function koiSVG(lv,w,h,sfx){
+ var p=KPAL[Math.max(0,Math.min(5,lv))],id="kbg"+sfx;
+ var dragon=lv>=5,wl=dragon?22:9;
+ var horns=dragon?'<g stroke="'+p.accent+'" stroke-width="2.6" fill="none" stroke-linecap="round"><path d="M112,17 C116,2 126,-4 132,0"/><path d="M120,5 C125,-1 132,-2 135,2"/><path d="M126,8 C130,4 136,5 137,9"/><path d="M112,53 C116,68 126,74 132,70"/><path d="M120,65 C125,71 132,72 135,68"/><path d="M126,62 C130,66 136,65 137,61"/></g>':'';
+ var mane=dragon?'<g fill="'+p.accent+'" opacity=".95"><path d="M40,20 L45,2 L52,21 Z"/><path d="M52,17 L59,-3 L67,18 Z"/><path d="M68,15 L76,-6 L85,16 Z"/><path d="M86,16 L94,-2 L101,18 Z"/></g><path d="M40,18 Q72,-6 101,16" stroke="'+p.accent+'" stroke-width="1.5" fill="none" opacity=".5"/>':'';
+ var flame=dragon?'<g opacity=".92"><path d="M16,28 C3,21 -1,11 6,6 C6,16 12,19 18,23 Z" fill="#E8A53C"/><path d="M15,46 C2,53 -2,63 5,68 C5,58 11,55 17,51 Z" fill="#D9742A"/><path d="M9,37 C-4,37 -7,30 -2,24 C2,31 8,32 13,35 Z" fill="#F2C24B"/></g>':'';
+ var grad=dragon
+  ? '<linearGradient id="'+id+'" x1="0" y1="0" x2="1" y2="0.4"><stop offset="0" stop-color="'+p.b2+'"/><stop offset="0.35" stop-color="#FFF4C9"><animate attributeName="offset" values="0;0.7" dur="2.2s" repeatCount="indefinite"/></stop><stop offset="0.5" stop-color="#FFE9A0"><animate attributeName="offset" values="0.15;0.85" dur="2.2s" repeatCount="indefinite"/></stop><stop offset="1" stop-color="'+p.b2+'"/></linearGradient>'
+  : '<linearGradient id="'+id+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+p.b1+'"/><stop offset="1" stop-color="'+p.b2+'"/></linearGradient>';
+ var vb=dragon?"-14 -16 184 102":"0 0 152 70";
+ return '<svg viewBox="'+vb+'" width="'+w+'" height="'+h+'">'+
+  '<defs>'+grad+'</defs>'+flame+mane+
+  '<g><path d="M34,35 C22,19 7,12 2,17 C12,26 14,31 14,35 C14,39 12,44 2,53 C7,58 22,51 34,35 Z" fill="'+p.light+'" opacity=".9"/>'+
+  '<path d="M30,35 C22,26 12,22 8,25 C14,30 15,32 15,35 C15,38 14,40 8,45 C12,48 22,44 30,35 Z" fill="'+p.patch+'" opacity=".4"/></g>'+
+  '<path d="M84,26 C90,12 101,7 104,13 C100,19 95,24 89,28 Z" fill="'+p.light+'" opacity=".9"/>'+
+  '<path d="M84,44 C90,58 101,63 104,57 C100,51 95,46 89,42 Z" fill="'+p.light+'" opacity=".9"/>'+
+  '<path d="M30,35 C36,17 72,12 102,18 C119,21 129,28 131,35 C129,42 119,49 102,52 C72,58 36,53 30,35 Z" fill="url(#'+id+')" stroke="#E6DAC4" stroke-width="1"/>'+
+  '<path d="M95,20 C108,19 121,24 126,31 C121,35 110,35 99,33 C92,31 90,23 95,20 Z" fill="'+p.patch+'"/>'+
+  '<path d="M56,21 C71,18 84,21 87,28 C81,34 67,35 56,31 C49,29 49,24 56,21 Z" fill="'+p.accent+'" opacity=".93"/>'+
+  '<path d="M46,41 C57,39 70,41 75,45 C68,49 55,49 46,46 Z" fill="'+p.patch+'" opacity=".8"/>'+
+  horns+
+  '<circle cx="119" cy="29" r="3" fill="#2B2722"/><circle cx="120" cy="28" r="1" fill="#fff"/>'+
+  '<circle cx="119" cy="41" r="3" fill="#2B2722"/><circle cx="120" cy="40" r="1" fill="#fff"/>'+
+  '<path d="M131,33 C'+(131+wl)+',29 '+(135+wl)+',30 '+(134+wl)+',32" stroke="'+p.whisk+'" stroke-width="1.4" fill="none" stroke-linecap="round"/>'+
+  '<path d="M131,37 C'+(131+wl)+',41 '+(135+wl)+',40 '+(134+wl)+',38" stroke="'+p.whisk+'" stroke-width="1.4" fill="none" stroke-linecap="round"/>'+
+  '</svg>';
+}
+
+/* ===== 数据(与主工具保持一致) ===== */
+var KLV=[
+ {n:"锦鲤苗",min:0,d:"刚下水,一切的开始"},
+ {n:"小锦鲤",min:3,d:"有点样子了"},
+ {n:"红锦鲤",min:7,d:"红了,稳了"},
+ {n:"金鳞锦鲤",min:14,d:"金鳞加身"},
+ {n:"招福锦鲤",min:21,d:"自带福气"},
+ {n:"上岸锦鲤·化龙",min:30,d:"喷火长角,鲤跃龙门 🐉"}
+];
+var LUCKY=[
+ "这条稳稳入池了。攒够它们,offer 会自己游过来。","今天的小事,三个月后会变成你简历里的底气。","你不是在打杂,是在攒证据。慢慢来,池子在涨。","面试官追问到这条时,你会感谢今天认真记下的自己。","一件不起眼的事,被你翻译成了能说出口的东西。","秋招的运气,是这样一条条攒出来的。今天又厚了一点。","别急着证明什么。先把真东西留下,锦鲤都记着呢。","今天这口投喂很扎实。继续游,不用回头。","你以为的杂活,在简历里其实是「主动梳理 + 推动落地」。","稳住。能被你写下来的事,就已经是你的了。","焦虑的时候就来记一条。记着记着,你就有底气了。","锦鲤说:你值得一个好 offer,而且就在路上。","今天也没有白过——你又比昨天的自己更经得起追问。","慢慢来不丢人,空着手进面试才丢人。你在攒料,很好。","把它收好。这是只属于你的、谁也抄不走的真东西。","上岸不是运气,是你今天这一条一条堆出来的确定性。","你今天没有原地踏步,你往池子里又添了一块上岸的砖。","别人刷手机的时候,你在攒能写进简历的真东西。","这条记下来,面试时它就是你张口就来的底气。","实习不白干的标志,是你能把它说清楚——你刚做到了。","攒着攒着,你会发现自己比想象中做了更多事。","简历空不空,看的不是运气,是你愿不愿意每天记一条。","焦虑不会帮你上岸,但这一条会。","你正在把「好像也没干啥」,变成「我具体做了这些」。","锦鲤游得慢,但从不回头。今天这条,记得真好。","这一条,三个月后的你会偷偷感谢现在的你。","把杂活写成成果,是一种被低估的能力。你在练它。","不是所有努力都看得见,但被你写下来的,都算数。","你不需要很厉害才开始,你开始记了,就已经在变厉害。","今天又攒了一块拼图,离那份完整的简历更近了。","真东西不怕追问。你今天又多了一条不怕被问的。","慢一点没关系,方向对的人迟早上岸。","你以为只是记个流水账,其实是在给未来的自己存粮。","这条收好了。秋招那天,它会替你说话。","别小看今天这一句,它可能就是面试官眼睛一亮的那句。","攒真东西的人,运气都不会太差。","你正在做一件很多人想不到要做的事——把经历变成资产。","锦鲤记着你每一次认真。今天这条,它收下了。","写下来的那一刻,焦虑就少了一点,底气就多了一点。","你不是没东西写,只是还没开始记。现在记了,就有了。","每天一条,秋招的时候你就是有备而来的那个。","这条又给你的简历加了一道「防追问」的护甲。","别和别人比进度,和昨天的自己比就够了。你赢了。","把今天这件小事翻译好,它就不再是小事了。","你正在悄悄拉开和「裸面」那批人的差距。","上岸的人,往往只是比别人多记了几条而已。","这口投喂很有营养,锦鲤又胖了一圈 🐟","今天的认真,会在某场面试里突然回报你。","你存的不是记录,是未来从容的底气。","又一条经得起追问的真东西,稳稳落袋。"
+];
+var LUCKNAME=["上上签","锦鲤签","大吉签","顺遂签","稳签","攒福签","好运签","上岸签","福星签","锦囊签","扶摇签","心安签","必胜签","添福签","鲤跃签","定心签"];
+var MILE=[
+ [3,"已经第 3 条啦!坚持记的人,秋招赢在细节。继续投喂 🧧"],[5,"5 条啦!手感来了,记录这件事你已经上道了。"],[7,"攒满 7 条!这周没白干,简历又厚了一层。"],[10,"两位数啦!10 条真东西,够撑起一段像样的实习经历了。"],[14,"14 条真东西!你已经超过大多数还在迷茫的人了。"],[21,"21 条,稳了。这是一份扛得住任何追问的底气清单。"],[30,"30 条!锦鲤为你转身——这一池,就是你上岸的资本。"],[40,"40 条!你的料多到可以挑着写简历了,凡尔赛的烦恼 🐟"],[50,"50 条!半百里程碑——这已经不是攒料,是在建一座你的私人案例库。"],[66,"66 条,六六大顺!这份厚度,面试官想问倒你都难。"],[100,"100 条!!你把「没东西写」这四个字,彻底从字典里删了。"]
+];
+var EGGS=[
+ ["🐉","锦鲤化龙","攒满 30 条,锦鲤进化成会喷火、长龙角金鬃的「化龙」终极形态。"],
+ ["🌸","花瓣雨","每次成功翻译,结果卡片会飘下锦鲤色花瓣,小小的仪式感。"],
+ ["🎬","演示模式","作者专属邀请码进去,是预填满、能现场跑 AI 的演示版本。"],
+ ["⌨️","隐藏发码器","F12 打开控制台输入 mint(\"四个字\"),当场生成一个有效邀请码。"],
+ ["🐟","锦鲤会动","图标的尾巴和鱼鳍一直在轻轻摆动,养着养着就有感情了。"],
+ ["🎴","抽签玄学","每条鸡汤随机配签名,想集齐 16 种签,纯看缘分。"]
+];
+var FEATS=[
+ ["📝","今日投喂","4 个问题引导你说清一件小事,AI 翻译成能写进简历的 bullet。"],
+ ["🛡️","防杜撰铁律","只用你真填的内容,绝不瞎编数字成果——经得起面试追问。"],
+ ["🐟","锦鲤养成","攒得越多,锦鲤越进阶,直到化龙。把坚持变成看得见的成长。"],
+ ["🎯","按 JD 定制","粘贴目标岗位 JD,自动从你的经历里挑最匹配的,改写成简历 bullet 条目。"],
+ ["📄","通用简历合成","把所有记录合并去重、按方向归类,一键生成简历项目段。"],
+ ["🔍","面试深挖回溯","预演面试官的 6 层追问,教你用真实记录一句句接住。"],
+ ["🗓️","周报生成","选时间段,把这段时间的记录汇成一份周报。"],
+ ["🧳","数据迁移包","一键打包/恢复,换手机、换设备、换网址都不丢记录。"],
+ ["🧧","邀请码账号","邀请码=你的账号,数据存你自己手机本地,不丢。"],
+ ["💗","情绪价值系统","50 条鸡汤 + 16 签 + 11 里程碑,陪你扛过求职焦虑。"]
+];
+
+/* ===== 渲染 ===== */
+document.getElementById("heroFish").innerHTML=koiSVG(5,170,92,"hero");
+var kg="";
+for(var i=0;i<KLV.length;i++){var L=KLV[i],drag=i===5;
+ kg+='<div class="koicard'+(drag?' drag':'')+'">'+(drag?'<span class="tag">🐉</span>':'')+
+  '<span class="lv">Lv.'+(i+1)+'</span>'+
+  '<div class="fishbox">'+koiSVG(i,drag?150:120,drag?80:62,"g"+i)+'</div>'+
+  '<div class="nm">'+L.n+'</div>'+
+  '<div class="cond">攒满 '+L.min+' 条解锁 · '+L.d+'</div></div>';
+}
+document.getElementById("koiGrid").innerHTML=kg;
+
+var sl="",pc=(100/LUCKY.length).toFixed(0);
+for(var i=0;i<LUCKY.length;i++){sl+='<div class="soup"><span class="idx">'+(i+1)+'</span><span class="txt">'+LUCKY[i]+'</span><span class="pc">≈2%</span></div>';}
+document.getElementById("soupList").innerHTML=sl;
+
+document.getElementById("signBox").innerHTML=LUCKNAME.map(function(s){return '<span class="sign">'+s+'</span>';}).join("");
+
+document.getElementById("mileBox").innerHTML=MILE.map(function(m){return '<div class="mile"><div class="n">第 '+m[0]+' 条</div><div class="m">'+m[1]+'</div></div>';}).join("");
+
+document.getElementById("eggBox").innerHTML=EGGS.map(function(e){return '<div class="egg"><div class="e">'+e[0]+'</div><div class="t">'+e[1]+'</div><div class="d">'+e[2]+'</div></div>';}).join("");
+
+document.getElementById("featBox").innerHTML=FEATS.map(function(f){return '<div class="feat"><div class="fi">'+f[0]+'</div><div class="ft">'+f[1]+'</div><div class="fd">'+f[2]+'</div></div>';}).join("");
+</script>
+</body>
+</html>
