@@ -5,46 +5,85 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>实习翻译机 · 图文笔记九宫格</title>
 <style>
-:root{--koi:#E0694A;--koi-deep:#C24E32;--ink:#2B2722;--cream:#FBF3E4;--line:#EAD6BE;}
+:root{--koi:#E0694A;--koi-deep:#C24E32;--koi-line:#EAD2C5;--koi-bg:#FBEDE4;--gold:#C0922F;
+ --ink:#2B2722;--ink-2:#4A463F;--muted:#B3A793;--dim:#9A8F7E;--border:#E8DECB;--surface-2:#FBF6EE;
+ --sage:#5E7A63;--sage-bg:#EDF2EC;--sage-line:#CFE0CF;--serif:"Noto Serif SC",ui-serif,Georgia,serif;}
 *{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent;}
 body{background:#EFE6D4;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink);padding:18px 0 50px;}
 .tip{text-align:center;color:#8C8473;font-size:13px;margin:6px 16px 18px;line-height:1.6;}
 .deck{display:flex;flex-direction:column;align-items:center;gap:22px;}
-.slide{position:relative;width:min(92vw,430px);aspect-ratio:3/4;border-radius:22px;overflow:hidden;
- background:linear-gradient(168deg,#FFFBF2,#FBEEDB);box-shadow:0 16px 40px -20px rgba(150,110,60,.5);
- padding:34px 30px;display:flex;flex-direction:column;}
-.slide .no{position:absolute;top:16px;right:18px;font-size:12px;color:#C3B79F;font-weight:700;}
+.slide{position:relative;width:min(92vw,430px);aspect-ratio:3/4;border-radius:22px;overflow:hidden;box-shadow:0 16px 40px -20px rgba(150,110,60,.5);}
+.no{position:absolute;top:12px;right:14px;font-size:11px;color:#C3B79F;font-weight:700;z-index:5;}
+/* 海报卡(封面/痛点/CTA) */
+.poster{background:linear-gradient(168deg,#FFFBF2,#FBEEDB);padding:34px 30px;display:flex;flex-direction:column;}
+.poster.cover{background:linear-gradient(165deg,#FFE9CC,#FBD9B6);justify-content:center;text-align:center;}
 .eyebrow{font-size:14px;font-weight:700;color:var(--koi-deep);letter-spacing:.04em;margin-bottom:14px;}
-.big{font-family:"Noto Serif SC",serif;font-weight:900;font-size:34px;line-height:1.28;letter-spacing:.01em;}
-.big.sm{font-size:29px;}
+.big{font-family:var(--serif);font-weight:900;font-size:33px;line-height:1.3;}
+.big.sm{font-size:28px;}
 .big em{font-style:normal;color:var(--koi);}
 .sub{font-size:16px;line-height:1.7;color:#5C5345;margin-top:16px;}
-.lst{margin-top:18px;font-size:17px;line-height:2;color:#3F3a32;}
-.lst.s{font-size:15.5px;line-height:1.95;}
+.lst{margin-top:16px;font-size:17px;line-height:2;color:#3F3A32;}
 .spacer{flex:1;}
 .foot{font-size:13.5px;color:#9A8F7E;}
-.koiwrap{display:flex;justify-content:center;align-items:center;margin-top:8px;}
-.cmp{margin-top:16px;display:flex;flex-direction:column;gap:12px;}
-.cbox{border-radius:14px;padding:13px 15px;font-size:15px;line-height:1.55;}
-.cbox.bad{background:#F3ECE0;color:#8C8473;border:1px solid #E7DDCB;}
-.cbox.good{background:linear-gradient(160deg,#FFF1E8,#FBE2D2);color:var(--ink);border:1px solid var(--line);}
-.cbox .t{font-size:11.5px;font-weight:700;letter-spacing:.05em;margin-bottom:5px;}
-.cbox.bad .t{color:#B3A793;}.cbox.good .t{color:var(--koi-deep);}
-.parade{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:14px;}
-.pcell{width:30%;text-align:center;}
-.pcell svg{display:block;margin:0 auto;}
-.pcell b{font-size:10px;color:#9A8F7E;font-family:"Noto Serif SC",serif;}
-.gold{position:relative;border-radius:16px;overflow:hidden;height:120px;margin-top:14px;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#FFF7DC,#FBE6B6);}
-.gp{position:absolute;top:-10px;width:8px;height:8px;border-radius:60% 0 60% 0;opacity:0;animation:gf linear infinite;}
-@keyframes gf{0%{transform:translateY(-10px);opacity:0}12%{opacity:1}100%{transform:translateY(130px) translateX(var(--dx)) rotate(320deg);opacity:0}}
-.cover{justify-content:center;text-align:center;background:linear-gradient(165deg,#FFE9CC,#FBD9B6);}
-.cover .big{font-size:38px;}
 .tag{display:inline-block;background:var(--koi);color:#fff;font-weight:700;font-size:12.5px;border-radius:20px;padding:4px 13px;letter-spacing:.06em;}
-.desc{width:min(92vw,430px);margin:10px auto 0;background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;font-size:13.5px;line-height:1.8;color:#4A463F;white-space:pre-wrap;}
+.koiwrap{display:flex;justify-content:center;margin-top:8px;}
+/* 产品内页截图卡 */
+.shot{background:#FAF5EC;display:flex;flex-direction:column;}
+.appbar{height:32px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:12.5px;font-weight:700;}
+.appbar .rt{display:flex;gap:5px;align-items:center;font-size:11px;}
+.cap{flex:none;margin:4px 12px 8px;background:var(--koi);color:#fff;font-weight:700;font-size:13.5px;border-radius:12px;padding:8px 12px;text-align:center;box-shadow:0 6px 14px -8px rgba(224,105,74,.7);}
+.appbody{flex:1;overflow:hidden;padding:0 13px 13px;}
+.card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:14px;box-shadow:0 8px 20px -16px rgba(150,110,60,.5);}
+.datestrip{font-size:12px;color:var(--dim);font-weight:600;margin:2px 0 9px;}
+.q{margin-bottom:9px;}
+.qlabel{font-size:12.5px;font-weight:700;display:flex;gap:7px;line-height:1.4;}
+.qnum{font-family:var(--serif);color:var(--koi);font-weight:700;flex:none;}
+.qa{margin-top:5px;background:var(--surface-2);border:1px solid #ECE0CC;border-radius:9px;padding:7px 9px;font-size:11.5px;color:var(--ink-2);line-height:1.45;}
+.qbtn{margin-top:10px;background:var(--koi);color:#fff;font-weight:700;border-radius:11px;padding:11px;text-align:center;font-size:13.5px;box-shadow:0 8px 16px -9px rgba(224,105,74,.65);}
+/* 结果卡 luck */
+.luck{border-radius:16px;padding:16px;background:linear-gradient(170deg,#FCF1EA,#FBF6EE);border:1px solid var(--koi-line);}
+.luck.gold{background:linear-gradient(160deg,#FFF7DC,#FBE8B8);border-color:#E9C766;}
+.lucktop{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+.luckstamp{font-family:var(--serif);font-size:12px;font-weight:700;color:#fff;background:var(--koi);border-radius:8px;padding:3px 9px;}
+.luck.gold .luckstamp{background:linear-gradient(135deg,#E0A92E,#C9881E);}
+.luckname{font-family:var(--serif);font-size:13px;color:var(--koi-deep);font-weight:600;}
+.luckmsg{font-family:var(--serif);font-size:15.5px;line-height:1.7;color:var(--ink);font-weight:500;}
+.luckbullet{margin-top:12px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px 13px;}
+.bltag{font-size:10.5px;font-weight:700;color:var(--sage);letter-spacing:.06em;margin-bottom:7px;}
+.blbody{font-size:13.5px;line-height:1.65;color:var(--ink);font-weight:500;}
+.lucktip{margin-top:10px;font-size:11.5px;color:var(--muted);}
+/* 养成进度 */
+.klvtop{display:flex;align-items:center;gap:9px;margin-bottom:9px;}
+.klvbadge{font-family:var(--serif);font-weight:700;font-size:12px;color:#fff;background:linear-gradient(135deg,var(--koi),var(--koi-deep));padding:3px 11px;border-radius:20px;}
+.klvnext{margin-left:auto;font-size:11px;color:var(--muted);font-weight:600;}
+.klvtrack{height:8px;background:var(--koi-bg);border:1px solid var(--koi-line);border-radius:6px;overflow:hidden;}
+.klvfill{height:100%;background:linear-gradient(90deg,var(--koi),var(--gold));border-radius:6px;}
+/* 简历成品 paper */
+.paper{background:linear-gradient(180deg,#FFFFFF,#FCFAF6);border:1px solid var(--border);border-radius:16px;padding:16px;}
+.ptitle{font-size:19px;font-weight:900;margin:6px 0 4px;}
+.psub{font-size:11.5px;color:var(--dim);line-height:1.5;margin-bottom:12px;}
+.rfgroup{margin-bottom:12px;}
+.rfhead{font-family:var(--serif);font-weight:700;font-size:13px;color:var(--ink);padding-bottom:5px;margin-bottom:7px;border-bottom:1.5px solid var(--koi-line);}
+.rfbul{font-size:12.5px;line-height:1.65;color:var(--ink-2);display:flex;gap:6px;margin-bottom:6px;}
+.rfdash{color:var(--koi);font-weight:700;flex:none;}
+/* 收集册 */
+.sgcoll{background:#fff;border:1px solid var(--border);border-radius:16px;padding:13px;}
+.sgh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;}
+.sgt{font-family:var(--serif);font-weight:700;font-size:14px;}
+.sgp{font-size:11px;font-weight:700;color:var(--koi-deep);}
+.sggrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+.sgcell{border-radius:9px;border:1px solid var(--border);min-height:42px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;}
+.sgcell .ic{font-size:14px;}
+.sgcell .sn{font-family:var(--serif);font-size:10px;font-weight:600;}
+.sgcell.lit{color:var(--koi-deep);background:linear-gradient(160deg,#FFF3EC,#FBE3D6);border-color:var(--koi-line);}
+.sgcell.dark{color:#C7BBA8;background:var(--surface-2);}
+.gp{position:absolute;top:-10px;width:7px;height:7px;border-radius:60% 0 60% 0;opacity:0;animation:gf linear infinite;z-index:1;}
+@keyframes gf{0%{transform:translateY(-10px);opacity:0}12%{opacity:1}100%{transform:translateY(440px) translateX(var(--dx)) rotate(320deg);opacity:0}}
+.desc{width:min(92vw,430px);margin:10px auto 0;background:#fff;border:1px solid var(--koi-line);border-radius:16px;padding:16px;font-size:13.5px;line-height:1.8;color:#4A463F;white-space:pre-wrap;}
 </style>
 </head>
 <body>
-<div class="tip">📸 逐张截图发小红书 · 每张已是 3:4 · 第 9 张下面附正文文案</div>
+<div class="tip">📸 逐张截图发小红书 · 每张已是 3:4 · ③~⑧ 为真实产品内页 · 底部附正文</div>
 <div class="deck" id="deck"></div>
 <script>
 var KPAL=[
@@ -89,22 +128,41 @@ function koiSVG(lv,w,h,sfx){lv=Math.max(0,Math.min(11,lv));var p=KPAL[lv],id="k"
   '<g stroke="#3B2D2B" stroke-width="1.3" stroke-linecap="round"><path d="M111,34.5 l3,-1.8"/><path d="M112,37.5 l3.2,-0.4"/></g>'+
   '<path d="M118,45 q5,4 10,1.5" stroke="#D98C8C" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>';
 }
-var parade='';for(var i=0;i<12;i++){parade+='<div class="pcell">'+koiSVG(i,64,38,"p"+i)+'<b>Lv.'+(i+1)+'</b></div>';}
+function bar(){return '<div class="appbar"><span>9:41</span><span class="rt">●●●● 5G ▮</span></div>';}
+var sgcells='';var litset=[0,1,3,4,6,8,10];for(var i=0;i<12;i++){var on=litset.indexOf(i)>=0;var nm=["上上签","锦鲤签","大吉签","顺遂签","稳签","攒福签","好运签","上岸签","福星签","锦囊签","扶摇签","心安签"][i];sgcells+='<div class="sgcell '+(on?'lit':'dark')+'"><span class="ic">'+(on?'🎴':'🔒')+'</span><span class="sn">'+(on?nm:'？签')+'</span></div>';}
+
 var SLIDES=[
- '<div class="slide cover"><div class="no">1/9</div><span class="tag">实习生必看</span><div class="big" style="margin-top:18px">实习全是<br><em>dirty work</em>?<br>打杂也能攒成简历!</div><div class="sub">每天 1 分钟,AI 帮你把杂活<br>翻译成能写进简历的经历 🧧</div><div class="koiwrap">'+koiSVG(11,150,98,"cov")+'</div></div>',
- '<div class="slide"><div class="no">2/9</div><div class="eyebrow">是不是你 👀</div><div class="big sm">实习生的日常<br>be like 😭</div><div class="lst">📌 复印、贴发票、跑腿<br>📌 拉表格、录数据、做会议纪要<br>📌 到写简历那天…<br>盯着空白文档打不出一个字</div><div class="spacer"></div><div class="foot">往下划,有救 👇</div></div>',
- '<div class="slide"><div class="no">3/9</div><div class="eyebrow">最难的不是打杂</div><div class="big sm">网上都教"包装<br>dirty work"<br>但我总怕…</div><div class="sub">量化成果、结合业务、用专业动词——方法我都懂。<br><br>可一自己写:要么憋不出,要么<b>包装过头</b>,生怕面试官一追问就露馅 🥹</div></div>',
- '<div class="slide"><div class="no">4/9</div><div class="eyebrow">直到我发现</div><div class="big">一个免费小工具<br><em>实习翻译机</em><br>· 锦鲤版</div><div class="sub">它不让你硬编,而是把你<b>真做过</b>的杂活,翻译成简历语言。</div><div class="koiwrap">'+koiSVG(4,140,80,"s4")+'</div></div>',
- '<div class="slide"><div class="no">5/9</div><div class="eyebrow">用法 · 每天1分钟</div><div class="big sm">回答 4 个小问题<br>就出一句简历</div><div class="lst s">1️⃣ 今天做了啥<br>2️⃣ 为了解决什么<br>3️⃣ 你当时怎么想 / 卡在哪<br>4️⃣ 结果带来什么变化<br><br>→ AI 当场翻译成一句简历 bullet</div></div>',
- '<div class="slide"><div class="no">6/9</div><div class="eyebrow">翻译前 vs 翻译后</div><div class="big sm">同一件杂活<br>差距有多大</div><div class="cmp"><div class="cbox bad"><div class="t">❌ 原始</div>帮忙整理了一周的会议纪要</div><div class="cbox good"><div class="t">✅ 翻译后</div>负责部门会议纪要标准化归档,统一记录口径,支撑跨部门信息同步</div></div></div>',
- '<div class="slide"><div class="no">7/9</div><div class="eyebrow">最戳我的一点</div><div class="big sm">它<em>不瞎编</em><br>经得起追问</div><div class="lst s">✅ 只用你真做过的,不替你编数字<br>✅ 动词不浮夸(不滥用"主导")<br>　 也不弱成"参与"<br>✅ 还能贴 JD,自动定制简历段</div></div>',
- '<div class="slide"><div class="no">8/9</div><div class="eyebrow">还是个养成游戏</div><div class="big sm">越攒越可爱<br>满级是只奶龙 🐉</div><div class="parade">'+parade+'</div><div class="gold" id="goldStage"></div><div class="foot" style="margin-top:10px">还有 0.1% 隐藏款金光彩蛋 · 上岸玄学拉满 ✨</div></div>',
- '<div class="slide cover"><div class="no">9/9</div><span class="tag">工具免费</span><div class="big" style="margin-top:18px">评论扣「<em>上岸</em>」<br>领邀请码 🧧</div><div class="sub">🔗 2899959170-hue.github.io<br>数据只存你自己手机本地<br><b>记得用浏览器打开,别在微信里点</b></div><div class="koiwrap">'+koiSVG(11,130,86,"end")+'</div></div>'
+ // 1 封面
+ '<div class="slide"><div class="no">1/9</div><div class="poster cover"><span class="tag">实习生必看</span><div class="big" style="margin-top:16px;font-size:37px">实习全是<br><em>dirty work</em>?<br>打杂也能攒成简历!</div><div class="sub">每天 1 分钟,AI 帮你把杂活<br>翻译成能写进简历的经历 🧧</div><div class="koiwrap">'+koiSVG(11,150,98,"cov")+'</div></div></div>',
+ // 2 痛点
+ '<div class="slide"><div class="no">2/9</div><div class="poster"><div class="eyebrow">是不是你 👀</div><div class="big sm">实习生的日常<br>be like 😭</div><div class="lst">📌 复印、贴发票、跑腿<br>📌 拉表格、录数据、写会议纪要<br>📌 到写简历那天…<br>盯着空白文档打不出一个字</div><div class="spacer"></div><div class="foot">往下划,有救 👇</div></div></div>',
+ // 3 投喂卡(真实UI)
+ '<div class="slide"><div class="no">3/9</div><div class="shot">'+bar()+'<div class="cap">① 每天1分钟 · 回答4个小问题</div><div class="appbody"><div class="card"><div class="datestrip">📅 今天 2026 年 6 月 2 日 · 周一</div>'+
+  '<div class="q"><div class="qlabel"><span class="qnum">01</span>今天他们让你具体做了啥?</div><div class="qa">帮运营核对了一场直播活动的后台数据,把异常的几条挑出来标注</div></div>'+
+  '<div class="q"><div class="qlabel"><span class="qnum">02</span>这事在项目里是哪一环?</div><div class="qa">季度大促的一个环节,数据要给复盘会用,不能有错</div></div>'+
+  '<div class="q"><div class="qlabel"><span class="qnum">03</span>你当时怎么想?卡在哪?</div><div class="qa">先对埋点口径,发现两个环节对不上,逐条回溯找到是统计重复</div></div>'+
+  '<div class="q"><div class="qlabel"><span class="qnum">04</span>最后交出去什么?</div><div class="qa">挑出 3 条异常并修正口径,复盘用的是我核对后的版本</div></div>'+
+  '<div class="qbtn">投喂锦鲤 · 翻译成简历</div></div></div></div></div>',
+ // 4 翻译结果卡(真实UI)
+ '<div class="slide"><div class="no">4/9</div><div class="shot">'+bar()+'<div class="cap">② AI 当场翻译成简历 bullet · 不瞎编</div><div class="appbody" style="display:flex;align-items:center"><div class="luck" style="width:100%"><div class="lucktop"><span class="luckstamp">真东西 +1</span><span class="luckname">🎴 锦鲤签</span></div><div class="luckmsg">今天的小事,三个月后会变成你简历里的底气。</div><div class="luckbullet"><div class="bltag">翻译好的简历 BULLET</div><div class="blbody">核对季度大促直播活动后台数据,发现并修正 3 条因统计重复导致的异常,统一埋点口径,确保复盘使用准确版本。</div></div><div class="lucktip">想更值钱?下次补个具体数字 · 复制这条</div></div></div></div></div>',
+ // 5 简历成品(真实UI)
+ '<div class="slide"><div class="no">5/9</div><div class="shot">'+bar()+'<div class="cap">③ 攒够后一键汇总成简历项目段</div><div class="appbody"><div class="paper"><div class="eyebrow">PART 1 · 写进简历</div><div class="ptitle">简历项目段 · 成品</div><div class="psub">已把记录合并去重、按方向归类,压到字数内</div>'+
+  '<div class="rfgroup"><div class="rfhead">数据分析与复盘</div><div class="rfbul"><span class="rfdash">·</span><span>核对直播后台数据,修正 3 条异常,统一埋点口径</span></div><div class="rfbul"><span class="rfdash">·</span><span>搭建日活/留存看板,周度出表由 2 小时压缩至 10 分钟</span></div></div>'+
+  '<div class="rfgroup"><div class="rfhead">用户研究与产品</div><div class="rfbul"><span class="rfdash">·</span><span>归类 600+ 条反馈为 5 类需求池,推动下线 2 项低使用功能</span></div></div>'+
+  '<div class="qbtn">一键复制整段简历 📋</div></div></div></div></div>',
+ // 6 养成进度(真实UI)
+ '<div class="slide"><div class="no">6/9</div><div class="shot">'+bar()+'<div class="cap">越攒越进阶 · 把坚持变成成长</div><div class="appbody" style="display:flex;flex-direction:column;justify-content:center;gap:14px"><div class="card"><div class="klvtop"><span class="klvbadge">Lv.9 黄金锦鲤</span><span class="klvnext">再 6 条进阶「月光锦鲤」</span></div><div class="klvtrack"><div class="klvfill" style="width:72%"></div></div><div style="text-align:center;margin-top:14px">'+koiSVG(8,150,90,"lv9")+'</div><div style="text-align:center;font-size:12px;color:var(--dim);margin-top:4px">已攒下 28 条「真东西」</div></div></div></div></div>',
+ // 7 收集册(真实UI)
+ '<div class="slide"><div class="no">7/9</div><div class="shot">'+bar()+'<div class="cap">抽签玄学 · 攒齐 16 签靠缘分</div><div class="appbody" style="display:flex;align-items:center"><div class="sgcoll" style="width:100%"><div class="sgh"><span class="sgt">🎴 签名收集册</span><span class="sgp">已点亮 7/16</span></div><div class="sggrid">'+sgcells+'</div></div></div></div></div>',
+ // 8 奶龙满级(真实UI + 金光)
+ '<div class="slide"><div class="no">8/9</div><div class="shot" id="naislide">'+bar()+'<div class="cap">满级化身奶龙 🐉 + 0.1% 隐藏款</div><div class="appbody" style="display:flex;align-items:center"><div class="luck gold" style="width:100%"><div class="lucktop"><span class="luckstamp">真东西 +1</span><span class="luckname">🌟 隐藏 · 万分之一签</span></div><div class="luckmsg">0.1% 隐藏彩蛋 · 鲤跃龙门 🐉 锦鲤抬头对你说:「就你了。」</div><div style="text-align:center;margin-top:6px">'+koiSVG(11,150,98,"nai")+'</div></div></div></div></div>',
+ // 9 CTA
+ '<div class="slide"><div class="no">9/9</div><div class="poster cover"><span class="tag">工具免费</span><div class="big" style="margin-top:16px">评论扣「<em>上岸</em>」<br>领邀请码 🧧</div><div class="sub">🔗 2899959170-hue.github.io<br>数据只存你自己手机本地<br><b>记得用浏览器打开,别在微信里点</b></div><div class="koiwrap">'+koiSVG(11,130,86,"end")+'</div></div></div>'
 ];
 document.getElementById("deck").innerHTML=SLIDES.join("")+'<div class="desc">实习全是 dirty work,简历空空的姐妹看过来🧧\n\n小红书上好多教"如何包装 dirty work"的,方法我都懂——量化、结合业务、用专业动词。但真自己写就露怯:要么憋不出,要么一包装就过头,生怕面试官追问就露馅😭\n\n后来用了个免费小工具「实习翻译机」:每天1分钟回答4个小问题,它帮我把杂活翻译成能直接写进简历的经历。最戳我的是不瞎编——只用你真做过的、不替你编数字、动词也不浮夸,经得起追问;还能贴JD自动定制简历段。\n\n而且做成了养成游戏:锦鲤越攒越可爱,满级是只奶龙🐉,还有0.1%隐藏款金光彩蛋,上岸玄学拉满哈哈。\n\n打杂不可怕,白干才可怕。每天一分钟,把 dirty work 偷偷攒成上岸的底气💪\n\n工具免费,凭邀请码解锁🧧 想要的评论区扣「上岸」,我发你链接和码👇\n\n#实习 #dirtywork #实习打杂 #攒简历 #秋招 #校招 #大学生 #求职 #简历 #实习生日常</div>';
-var gs=document.getElementById("goldStage");
-if(gs){gs.innerHTML=koiSVG(11,92,58,"gld");var gc=["#F3C24B","#E0A92E","#FFD96B","#FFE9A0"];
- for(var z=0;z<10;z++){var pp=document.createElement("span");pp.className="gp";pp.style.left=(6+Math.random()*88)+"%";pp.style.background=gc[z%gc.length];pp.style.animationDuration=(1.8+Math.random()*1.4)+"s";pp.style.animationDelay=(Math.random()*2)+"s";pp.style.setProperty("--dx",(Math.random()*30-15)+"px");var s2=(6+Math.random()*5);pp.style.width=pp.style.height=s2+"px";gs.appendChild(pp);}}
+// 奶龙卡金色花瓣
+var ns=document.getElementById("naislide");
+if(ns){var gc=["#F3C24B","#E0A92E","#FFD96B","#FFE9A0"];for(var z=0;z<12;z++){var pp=document.createElement("span");pp.className="gp";pp.style.left=(5+Math.random()*90)+"%";pp.style.background=gc[z%gc.length];pp.style.animationDuration=(2+Math.random()*1.6)+"s";pp.style.animationDelay=(Math.random()*2.4)+"s";pp.style.setProperty("--dx",(Math.random()*36-18)+"px");var s2=(6+Math.random()*5);pp.style.width=pp.style.height=s2+"px";ns.appendChild(pp);}}
 </script>
 </body>
 </html>
