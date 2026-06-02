@@ -39,6 +39,15 @@ section{margin-top:40px;}
 .koicard .nm{font-family:var(--serif);font-size:18px;font-weight:700;margin-top:4px;}
 .koicard .cond{font-size:12.5px;color:var(--dim);margin-top:3px;}
 .koicard .tag{position:absolute;top:14px;right:14px;font-size:18px;}
+/* 锦鲤游动动效 */
+svg .ktail{transform-origin:34px 35px;animation:ktail 1.4s ease-in-out infinite;}
+svg .kfinA{transform-origin:88px 27px;animation:kfinA 1.7s ease-in-out infinite;}
+svg .kfinB{transform-origin:88px 43px;animation:kfinB 1.7s ease-in-out infinite;}
+@keyframes ktail{0%,100%{transform:rotate(-7deg);}50%{transform:rotate(7deg);}}
+@keyframes kfinA{0%,100%{transform:rotate(0);}50%{transform:rotate(-12deg);}}
+@keyframes kfinB{0%,100%{transform:rotate(0);}50%{transform:rotate(12deg);}}
+.herofish svg{animation:herobob 3s ease-in-out infinite;}
+@keyframes herobob{0%,100%{transform:translateY(0) rotate(-1.5deg);}50%{transform:translateY(-6px) rotate(1.5deg);}}
 /* 鸡汤图鉴 */
 .probbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
 .pill{font-size:12px;border-radius:20px;padding:5px 12px;font-weight:600;border:1px solid var(--border-strong);background:var(--surface);color:var(--ink-2);}
@@ -171,10 +180,10 @@ function koiSVG(lv,w,h,sfx){
  var vb=dragon?"-14 -16 184 102":"0 0 152 70";
  return '<svg viewBox="'+vb+'" width="'+w+'" height="'+h+'">'+
   '<defs>'+grad+'</defs>'+flame+mane+
-  '<g><path d="M34,35 C22,19 7,12 2,17 C12,26 14,31 14,35 C14,39 12,44 2,53 C7,58 22,51 34,35 Z" fill="'+p.light+'" opacity=".9"/>'+
+  '<g class="ktail"><path d="M34,35 C22,19 7,12 2,17 C12,26 14,31 14,35 C14,39 12,44 2,53 C7,58 22,51 34,35 Z" fill="'+p.light+'" opacity=".9"/>'+
   '<path d="M30,35 C22,26 12,22 8,25 C14,30 15,32 15,35 C15,38 14,40 8,45 C12,48 22,44 30,35 Z" fill="'+p.patch+'" opacity=".4"/></g>'+
-  '<path d="M84,26 C90,12 101,7 104,13 C100,19 95,24 89,28 Z" fill="'+p.light+'" opacity=".9"/>'+
-  '<path d="M84,44 C90,58 101,63 104,57 C100,51 95,46 89,42 Z" fill="'+p.light+'" opacity=".9"/>'+
+  '<path class="kfinA" d="M84,26 C90,12 101,7 104,13 C100,19 95,24 89,28 Z" fill="'+p.light+'" opacity=".9"/>'+
+  '<path class="kfinB" d="M84,44 C90,58 101,63 104,57 C100,51 95,46 89,42 Z" fill="'+p.light+'" opacity=".9"/>'+
   '<path d="M30,35 C36,17 72,12 102,18 C119,21 129,28 131,35 C129,42 119,49 102,52 C72,58 36,53 30,35 Z" fill="url(#'+id+')" stroke="#E6DAC4" stroke-width="1"/>'+
   '<path d="M95,20 C108,19 121,24 126,31 C121,35 110,35 99,33 C92,31 90,23 95,20 Z" fill="'+p.patch+'"/>'+
   '<path d="M56,21 C71,18 84,21 87,28 C81,34 67,35 56,31 C49,29 49,24 56,21 Z" fill="'+p.accent+'" opacity=".93"/>'+
@@ -207,7 +216,7 @@ var EGGS=[
  ["🐉","锦鲤化龙","攒满 30 条,锦鲤进化成会喷火、长龙角金鬃的「化龙」终极形态。"],
  ["🌸","花瓣雨","每次成功翻译,结果卡片会飘下锦鲤色花瓣,小小的仪式感。"],
  ["🎬","演示模式","作者专属邀请码进去,是预填满、能现场跑 AI 的演示版本。"],
- ["⌨️","隐藏发码器","F12 打开控制台输入 mint(\"四个字\"),当场生成一个有效邀请码。"],
+ ["🌟","万分之一隐藏签","0.1% 概率刷出传说签,触发全屏金色花瓣雨 + 锦鲤化龙高光。"],
  ["🐟","锦鲤会动","图标的尾巴和鱼鳍一直在轻轻摆动,养着养着就有感情了。"],
  ["🎴","抽签玄学","每条鸡汤随机配签名,想集齐 16 种签,纯看缘分。"]
 ];

@@ -167,6 +167,23 @@ textarea::placeholder{color:var(--dim);}
 .luck.rare .luckmsg{color:#5C3D0A;}
 .luck.rare:after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:18px;box-shadow:inset 0 0 24px -6px rgba(255,215,90,.6);animation:rareglow 1.8s ease-in-out infinite;}
 @keyframes rareglow{0%,100%{opacity:.5;}50%{opacity:1;}}
+.rarefx{position:fixed;inset:0;z-index:300;pointer-events:none;overflow:hidden;transition:opacity .6s;}
+.rarefx.out{opacity:0;}
+.rarefx .rfxhalo{position:absolute;left:50%;top:38%;width:340px;height:340px;transform:translate(-50%,-50%);border-radius:50%;
+  background:radial-gradient(circle,rgba(255,225,130,.55) 0%,rgba(255,210,90,.18) 45%,transparent 70%);animation:rfxpulse 1.6s ease-in-out infinite;}
+@keyframes rfxpulse{0%,100%{transform:translate(-50%,-50%) scale(.9);opacity:.7;}50%{transform:translate(-50%,-50%) scale(1.15);opacity:1;}}
+.rarefx .rfxdragon{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%) scale(.4);opacity:0;
+  filter:drop-shadow(0 6px 22px rgba(201,150,30,.6));animation:rfxdragon 2.6s cubic-bezier(.2,.9,.3,1.1) forwards;}
+@keyframes rfxdragon{0%{transform:translate(-50%,-50%) scale(.3) rotate(-8deg);opacity:0;}
+  22%{transform:translate(-50%,-50%) scale(1.12) rotate(3deg);opacity:1;}
+  40%{transform:translate(-50%,-50%) scale(1) rotate(0);opacity:1;}
+  80%{opacity:1;}100%{transform:translate(-50%,-54%) scale(1.04);opacity:0;}}
+.rarefx .rfxtip{position:absolute;left:0;right:0;top:58%;text-align:center;font-family:var(--serif);font-weight:700;
+  font-size:19px;color:#9A6B12;text-shadow:0 2px 10px rgba(255,225,130,.9);animation:rfxtip 2.6s ease forwards;}
+@keyframes rfxtip{0%{opacity:0;transform:translateY(10px) scale(.9);}25%{opacity:1;transform:translateY(0) scale(1);}80%{opacity:1;}100%{opacity:0;}}
+.rfxpetal{position:absolute;top:-16px;border-radius:60% 0 60% 0;opacity:.95;box-shadow:0 0 6px rgba(255,210,90,.7);}
+@keyframes rfxfall{0%{opacity:0;transform:translateY(-20px) translateX(0) rotate(0);}
+  8%{opacity:1;}100%{opacity:0;transform:translateY(105vh) translateX(var(--dx)) rotate(360deg);}}
 .luckmsg{font-family:var(--serif);font-size:16.5px;line-height:1.75;color:var(--ink);font-weight:500;}
 .luckbullet{margin-top:15px;background:#fff;border:1px solid var(--border);border-radius:13px;padding:15px 16px;}
 .bltag{font-size:11px;font-weight:700;color:var(--sage);letter-spacing:.06em;margin-bottom:8px;}
@@ -1039,7 +1056,7 @@ function renderToday(){
  var cp=document.getElementById("calPrev");if(cp)cp.addEventListener("click",function(){state.calM--;if(state.calM<0){state.calM=11;state.calY--;}renderToday();});
  var cn=document.getElementById("calNext");if(cn)cn.addEventListener("click",function(){state.calM++;if(state.calM>11){state.calM=0;state.calY++;}renderToday();});
  panel.querySelectorAll("[data-day]").forEach(function(c){c.addEventListener("click",function(){state.selKey=c.getAttribute("data-day");renderToday();});});
- if(state.result)confetti();
+ if(state.result){if(state.result.rare)rareFx();else confetti();}
 }
 
 function buildCalendar(){
@@ -1184,6 +1201,31 @@ function confetti(){
   p.style.setProperty("--dx",dx+"px");
   card.appendChild(p);setTimeout(function(){p.remove();},dur*1000+400);
  })(i);}
+}
+/* 0.1% 隐藏签:全屏金色花瓣雨 + 锦鲤化龙高光 */
+function rareFx(){
+ confetti(); // 卡片上也来一波
+ var ov=document.createElement("div");ov.className="rarefx";
+ // 中央化龙高光
+ var dragon=document.createElement("div");dragon.className="rfxdragon";
+ dragon.innerHTML=(typeof koiSVG==="function")?koiSVG(5,260,150,"rfx"):"🐉";
+ ov.appendChild(dragon);
+ var halo=document.createElement("div");halo.className="rfxhalo";ov.appendChild(halo);
+ var tip=document.createElement("div");tip.className="rfxtip";tip.textContent="✨ 万分之一 · 欧皇时刻 ✨";ov.appendChild(tip);
+ // 全屏金色花瓣雨
+ var gold=["#F3C24B","#E0A92E","#FFD96B","#C9881E","#FFE9A0","#E0694A"];
+ for(var i=0;i<70;i++){(function(i){
+  var p=document.createElement("span");p.className="rfxpetal";
+  p.style.left=(Math.random()*100)+"%";p.style.background=gold[i%gold.length];
+  var dur=2.2+Math.random()*1.8,dx=(Math.random()*120-60);
+  p.style.animation="rfxfall "+dur+"s cubic-bezier(.3,.2,.5,1) "+(Math.random()*.8)+"s forwards";
+  p.style.setProperty("--dx",dx+"px");
+  p.style.width=p.style.height=(7+Math.random()*8)+"px";
+  ov.appendChild(p);
+ })(i);}
+ document.body.appendChild(ov);
+ setTimeout(function(){ov.classList.add("out");},2600);
+ setTimeout(function(){if(ov.parentNode)ov.parentNode.removeChild(ov);},3400);
 }
 
 function renderExport(){
@@ -1483,12 +1525,10 @@ kf.textContent="@keyframes fall0{0%{opacity:0;transform:translateY(0) translateX
 document.head.appendChild(kf);
 
 /* ── 邀请码解锁(导流私域) ──
-   下面 INVITE_CODES 里就是你对外发放的码,自己随意增删。
-   想批量发不同码:浏览器按 F12 打开控制台,输入 mint("自定义4位") 回车,会生成一个 6 位有效码。 */
+   下面 INVITE_CODES 里就是你对外发放的码,自己随意增删。 */
 var INVITE_CODES=["SHANG2026","OFFER66","LUCKY88","JINLI77","BISHANGAN"];
 var UKEY="shixi-koi-unlocked";
 function mint(body){body=(body||"").toString().toUpperCase().slice(0,4);var h=0,map="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";for(var i=0;i<body.length;i++)h=(h*131+body.charCodeAt(i))%1296;return body+map[Math.floor(h/36)]+map[h%36];}
-window.mint=mint;
 function codeOK(raw){var c=(raw||"").trim().toUpperCase().replace(/\s/g,"");
  if(INVITE_CODES.indexOf(c)>=0)return true;
  if(!/^[A-Z0-9]{6}$/.test(c))return false;
