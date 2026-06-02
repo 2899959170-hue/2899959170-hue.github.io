@@ -73,6 +73,15 @@ section{margin-top:40px;}
 .feat .fi{font-size:20px;}
 .feat .ft{font-family:var(--serif);font-weight:700;font-size:15.5px;margin:7px 0 5px;}
 .feat .fd{font-size:13px;color:var(--ink-2);}
+/* 万分之一隐藏签 */
+.rarewrap{margin-top:16px;}
+.rarehd{font-family:var(--serif);font-size:15px;font-weight:700;color:#9A6B12;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.rarehd .b{font-size:11px;font-weight:700;color:#fff;background:linear-gradient(135deg,#E0A92E,#C9881E);border-radius:20px;padding:3px 10px;letter-spacing:.04em;}
+.rarecard{position:relative;overflow:hidden;background:linear-gradient(160deg,#FFF7DC,#FBE8B8 50%,#FCF3D6);border:1px solid #E9C766;border-radius:16px;padding:15px 16px;margin-bottom:12px;box-shadow:0 12px 30px -18px rgba(201,150,30,.6);}
+.rarecard .rt{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;}
+.rarecard .rn{font-family:var(--serif);font-weight:700;color:#9A6B12;font-size:14px;}
+.rarecard .rp{font-size:11px;font-weight:700;color:#fff;background:#C9881E;border-radius:20px;padding:2px 9px;}
+.rarecard .rm{font-size:13.5px;line-height:1.7;color:#5C3D0A;}
 /* cta */
 .cta{margin-top:46px;text-align:center;background:linear-gradient(170deg,#FCF1EA,#FBF6EE);border:1px solid var(--koi-line);border-radius:20px;padding:30px 22px;}
 .cta h3{font-family:var(--serif);font-size:20px;margin:0 0 8px;}
@@ -105,6 +114,7 @@ section{margin-top:40px;}
    <span class="pill">锦鲤进阶 → 必出升级文案</span>
   </div>
   <div class="souplist" id="soupList"></div>
+  <div class="rarewrap" id="rareBox"></div>
  </section>
 
  <section>
@@ -229,6 +239,14 @@ document.getElementById("koiGrid").innerHTML=kg;
 var sl="",pc=(100/LUCKY.length).toFixed(0);
 for(var i=0;i<LUCKY.length;i++){sl+='<div class="soup"><span class="idx">'+(i+1)+'</span><span class="txt">'+LUCKY[i]+'</span><span class="pc">≈2%</span></div>';}
 document.getElementById("soupList").innerHTML=sl;
+
+var RARE=[
+ "万里挑一的锦鲤本鲤,刚刚游过来看了你一眼 ✨ 这条被盖了枚隐藏金印——传说刷到它的人,那年秋招都上岸了。截图存好,这是只属于你的欧皇时刻。",
+ "0.1% 隐藏彩蛋 · 鲤跃龙门 🐉 锦鲤抬头对你说了句:「就你了。」别问玄学准不准,问就是稳。把这一刻收好,offer 已经在路上了。"
+];
+document.getElementById("rareBox").innerHTML=
+ '<div class="rarehd"><span class="b">SSR</span>万分之一隐藏签 · 各 0.1% 概率</div>'+
+ RARE.map(function(r){return '<div class="rarecard"><div class="rt"><span class="rn">🌟 隐藏 · 万分之一签</span><span class="rp">0.1%</span></div><div class="rm">'+r+'</div></div>';}).join("");
 
 document.getElementById("signBox").innerHTML=LUCKNAME.map(function(s){return '<span class="sign">'+s+'</span>';}).join("");
 

@@ -161,6 +161,12 @@ textarea::placeholder{color:var(--dim);}
 .luckstamp{font-family:var(--serif);font-size:13px;font-weight:700;color:#fff;background:var(--koi);
   border-radius:9px;padding:4px 11px;letter-spacing:.04em;}
 .luckname{font-family:var(--serif);font-size:14px;color:var(--koi-deep);font-weight:600;}
+.luck.rare{background:linear-gradient(160deg,#FFF7DC 0%,#FBE8B8 45%,#FCF3D6 100%);border-color:#E9C766;box-shadow:0 16px 40px -20px rgba(201,150,30,.65);}
+.luck.rare .luckstamp{background:linear-gradient(135deg,#E0A92E,#C9881E);box-shadow:0 6px 14px -6px rgba(201,150,30,.8);}
+.luck.rare .luckname{color:#9A6B12;}
+.luck.rare .luckmsg{color:#5C3D0A;}
+.luck.rare:after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:18px;box-shadow:inset 0 0 24px -6px rgba(255,215,90,.6);animation:rareglow 1.8s ease-in-out infinite;}
+@keyframes rareglow{0%,100%{opacity:.5;}50%{opacity:1;}}
 .luckmsg{font-family:var(--serif);font-size:16.5px;line-height:1.75;color:var(--ink);font-weight:500;}
 .luckbullet{margin-top:15px;background:#fff;border:1px solid var(--border);border-radius:13px;padding:15px 16px;}
 .bltag{font-size:11px;font-weight:700;color:var(--sage);letter-spacing:.06em;margin-bottom:8px;}
@@ -694,6 +700,11 @@ var LUCKY=[
  "又一条经得起追问的真东西,稳稳落袋。"
 ];
 var LUCKNAME=["上上签","锦鲤签","大吉签","顺遂签","稳签","攒福签","好运签","上岸签","福星签","锦囊签","扶摇签","心安签","必胜签","添福签","鲤跃签","定心签"];
+/* 万分之一隐藏签:普通投喂时各 0.1% 概率(共 0.2%)随机砸中,金色特效 */
+var RARE=[
+ "万里挑一的锦鲤本鲤,刚刚游过来看了你一眼 ✨ 这条被盖了枚隐藏金印——传说刷到它的人,那年秋招都上岸了。截图存好,这是只属于你的欧皇时刻。",
+ "0.1% 隐藏彩蛋 · 鲤跃龙门 🐉 锦鲤抬头对你说了句:「就你了。」别问玄学准不准,问就是稳。把这一刻收好,offer 已经在路上了。"
+];
 var MILE={3:"已经第 3 条啦!坚持记的人,秋招赢在细节。继续投喂 🧧",5:"5 条啦!手感来了,记录这件事你已经上道了。",7:"攒满 7 条!这周没白干,简历又厚了一层。",10:"两位数啦!10 条真东西,够撑起一段像样的实习经历了。",14:"14 条真东西!你已经超过大多数还在迷茫的人了。",21:"21 条,稳了。这是一份扛得住任何追问的底气清单。",30:"30 条!锦鲤为你转身——这一池,就是你上岸的资本。",40:"40 条!你的料多到可以挑着写简历了,凡尔赛的烦恼 🐟",50:"50 条!半百里程碑——这已经不是攒料,是在建一座你的私人案例库。",66:"66 条,六六大顺!这份厚度,面试官想问倒你都难。",100:"100 条!!你把「没东西写」这四个字,彻底从字典里删了。"};
 
 /* 锦鲤皮肤:每个等级换色,真正“看得出变化” */
@@ -976,7 +987,7 @@ function renderToday(){
  else{tl=buildCalendar();}
  var resultHtml="";
  if(state.result){var r=state.result;
-  resultHtml='<div class="luck" id="luckCard">'+
+  resultHtml='<div class="luck'+(r.rare?' rare':'')+'" id="luckCard">'+
    '<div class="lucktop"><span class="luckstamp">真东西 +1</span><span class="luckname">'+esc(r.name)+'</span></div>'+
    '<div class="luckmsg">'+esc(r.msg)+'</div>'+
    '<div class="luckbullet"><div class="bltag">翻译好的简历 bullet</div><div class="blbody">'+esc(r.bullet)+'</div></div>'+
@@ -1083,7 +1094,10 @@ function doTranslate(){
   var newLv=koiLevel(state.entries.length);
   var lvUp=newLv>prevLv;
   var mile=MILE[state.entries.length];
+  // 万分之一隐藏签:仅在非升级、非里程碑的普通投喂时,0.2% 触发(两条各 0.1%)
+  var rare=(!lvUp&&!mile&&Math.random()<0.002)?RARE[Math.floor(Math.random()*RARE.length)]:null;
   if(lvUp){state.result={bullet:bullet,tip:tip,msg:"锦鲤进阶啦!你的锦鲤升到「"+KLV[newLv].n+"」(Lv."+(newLv+1)+")——攒得越多,它越神气,你也越扛追问。",name:"进阶 🎉 Lv."+(newLv+1)};}
+  else if(rare){state.result={bullet:bullet,tip:tip,msg:rare,name:"🌟 隐藏 · 万分之一签",rare:true};}
   else state.result={bullet:bullet,tip:tip,msg:mile||pick(LUCKY),name:mile?"里程碑 🎉":pick(LUCKNAME)};
   state.busy=false;persist();syncStats();renderToday();
  }
