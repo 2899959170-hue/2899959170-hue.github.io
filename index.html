@@ -830,11 +830,11 @@ function curSkey(){var c=activeCode();return SKEY_BASE+(c?"::"+c:"");}
 var AKEY="shixi-fanyiji-ai-v1";
 /* ★ 把你的 DeepSeek key 填到下面这对引号里,所有学生就共用你的 key,打开即用、无需各自申请。
    例:var BUILTIN_KEY="sk-xxxxxxxx";  留空则走「学生填自己的 key / 本地规则」。 */
-var BUILTIN_KEY="sk-4024e873e1b5447b886759f7fe2fdb47";
+var BUILTIN_KEY="";
 /* 后端代理:填了就走代理(key 藏后端、前端不暴露);留空=前端直连 BUILTIN_KEY */
-var PROXY_URL="";
+var PROXY_URL="https://shixi-fanyiji-proxy.shixifanyi2899.workers.dev";
 function dsChat(b){
- if(PROXY_URL){return fetch(PROXY_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)});}
+ if(PROXY_URL){return fetch(PROXY_URL,{method:"POST",headers:{"Content-Type":"application/json","X-Invite-Code":activeCode()},body:JSON.stringify(b)});}
  return fetch("https://api.deepseek.com/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+state.apiKey},body:JSON.stringify(b)});
 }
 function load(){try{var r=localStorage.getItem(curSkey());if(r){var d=JSON.parse(r);state.entries=d.entries||[];state.signs=d.signs||[];}else{state.entries=[];state.signs=[];}}catch(e){state.entries=[];state.signs=[];}}
