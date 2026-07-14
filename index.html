@@ -820,7 +820,7 @@ function miniKoi(lv){lv=Math.max(0,Math.min(KPAL.length-1,lv));var p=KPAL[lv];
   '<ellipse cx="72" cy="36" rx="12" ry="8" fill="'+p.patch+'" opacity=".85"/>'+
   '<circle cx="106" cy="40" r="5" fill="#3B2D2B"/><circle cx="108" cy="38" r="1.6" fill="#fff"/></svg>';}
 
-var state={tab:"today",entries:[],result:null,busy:false,showExport:false,editing:null,calY:null,calM:null,selKey:null,showSet:false,apiKey:"",useAI:false,repFrom:null,repTo:null,draft:null,jd:"",jdLimit:240,jdResult:null,jdBusy:false,exLimit:300,exResult:null,exBusy:false,signs:[],forceRare:false,lang:"zh"};
+var state={tab:"today",entries:[],result:null,busy:false,showExport:false,editing:null,calY:null,calM:null,selKey:null,showSet:false,apiKey:"",useAI:false,repFrom:null,repTo:null,draft:null,jd:"",jdLimit:240,jdResult:null,jdBusy:false,exLimit:500,exResult:null,exBusy:false,signs:[],forceRare:false,lang:"zh"};
 /* 每个邀请码 = 一个独立"账号":数据按邀请码分箱存储,互不串。换码=另一个空池子。
    (注:同一台手机/浏览器内有效;真正"换设备也能登回来"需要后端账号,见底部说明) */
 var SKEY_BASE="shixi-fanyiji-koi-v2";
@@ -916,7 +916,7 @@ function jdTailorAI(jd,lim,exp){
 /* 通用简历:把全部真实记录「合成」成一份经历段(合并重复、按方向归类、限定总字数、零虚构) */
 function exSynth(){
  if(!state.entries.length){toast("先去攒几条记录");return;}
- var e2=document.getElementById("exLimit");if(e2)state.exLimit=Math.max(60,Math.min(600,parseInt(e2.value,10)||200));
+ var e2=document.getElementById("exLimit");if(e2)state.exLimit=Math.max(60,Math.min(900,parseInt(e2.value,10)||400));
  state.showExport=true;
  if(!(state.useAI&&(state.apiKey||PROXY_URL))){state.exResult=localSynth(state.exLimit);renderExport();return;}
  state.exBusy=true;state.exResult=null;renderExport();
@@ -927,8 +927,8 @@ function exSynth(){
 function exSynthAI(recs,lim){
  var sys=(state.lang==="en")
   ? "You are a senior resume coach. Below are the candidate's real work records (may be duplicated, scattered, inconsistent). Merge them into an English resume 'Internship/Project Experience' section.\nRequirements:\n1. Merge duplicate or highly similar records; never repeat the same thing;\n2. Group by competency theme (at most 3 themes), 2-4 bullets each;\n3. Bullets with real quantified results first;\n4. Never fabricate facts, background, major, numbers or company names not in the records;\n5. Ban filler like 'optimized processes', 'improved efficiency', 'leveraged synergies'; each bullet states clearly what was done, on what, with what result;\n6. Each bullet under ~25 words;\n7. Start each with a strong action verb, professional resume English.\nOutput ONLY JSON: {\"sections\":[{\"theme\":\"...\",\"bullets\":[\"...\"]}]} — no extra text, no markdown code block."
-  : "你是资深中文简历教练。下面是候选人攒的多条真实工作记录(可能重复、零散、口语化)。整合成一份能直接放进简历的『实习/项目经历』,风格对标一线大厂。\n要求:\n1. 合并重复或高度相似的记录,同一件事绝不重复出现;\n2. 输出 4-6 条 bullet,每条聚焦一个职责模块,按此结构写:模块名:做了什么 + 用什么方法或工具 + 涉及的规模范围 + 量化结果或产出。模块名用 2-6 字概括(如 样品测评管理 / 多平台比价 / 供应商对接);\n3. 尽量具体:写清对象、方法、工具(Excel/台账/打分表等)、流程、判断标准;\n4. 有数字的记录数字必须保留并前置;绝对不许编造记录里没有的数字、比例、金额、公司或产品名、人数、专业、背景,没有数字就不写数字;\n5. 禁止「优化流程」「提升效率」「赋能」「责任心强」这类空话套话;\n6. 模块名开头,简历书面语,每条可以写长(30-70字)把细节写透;\n7. 所有 bullet 正文合计不超过 "+lim+" 个汉字。\n只输出 JSON:{\"sections\":[{\"theme\":\"实习/项目经历\",\"bullets\":[\"模块名:…\"]}]},不要任何多余文字,不要 markdown 代码块。";
- return dsChat({model:"deepseek-chat",temperature:0.2,max_tokens:900,messages:[{role:"system",content:sys},{role:"user",content:"候选人真实记录:\n"+recs}]})
+  : "你是顶级大厂简历教练。把候选人零散的真实工作记录,整合改写成一份『实习/项目经历』,达到一线大厂简历的信息密度与专业度。\n\n【目标风格·范本(只学结构和详略程度,绝不照抄其中行业/数字/产品名)】\n▪样品测评管理:负责样品登记、发放与回收,每周从选品池约 60–70 款 SKU 中筛选适用人群试用;收集用户对性能、优缺点、购买意愿的打分(满分 10 分),筛出 7 分以上形成初选清单,并标注用户画像、卖点、痛点。\n▪多平台比价:每周导出淘宝、抖音、京东三平台同款 SKU 销售报表,用 Excel 搭建动态比价台账并设条件格式预警;核算剔除短期活动后的折算到手价,标记破价商品并同步差价幅度,反馈招商推动整改。\n\n【要求】\n1. 合并重复记录;输出 4-6 条,每条一个职责模块,以『模块名:』开头(模块名 4-8 字);\n2. 每条写透:做什么+具体方法或工具或流程+涉及维度或规模+判断标准+结果或产出;能拆的维度要展开(如从A、B、C、D 四维度),方法要具体(如用Excel搭台账并设预警);\n3. 专业、书面、高信息密度,像真大厂简历,不是职责罗列;\n4. 铁律:只能基于记录真实出现的事实。数字、比例、金额、公司或产品名、人数——有才写、没有绝不编;但对做法、流程、维度、工具可做专业化书面重述与合理展开(不算编造);\n5. 禁止空话(优化流程、提升效率、赋能、责任心强);\n6. 每条可长(50-100字)把细节写透,合计不超过 "+lim+" 字。\n只输出 JSON:{\"sections\":[{\"theme\":\"实习/项目经历\",\"bullets\":[\"模块名:…\"]}]},不要多余文字,不要 markdown。";
+ return dsChat({model:"deepseek-chat",temperature:0.2,max_tokens:1400,messages:[{role:"system",content:sys},{role:"user",content:"候选人真实记录:\n"+recs}]})
  .then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json();}).then(function(j){
   var t=(j&&j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content||"").trim();
   t=t.replace(/^```(json)?/i,"").replace(/```$/,"").trim();
@@ -1317,7 +1317,7 @@ function renderExport(){
    '</div>';
  var exlim=state.exLimit||200;
  var intro='<div class="card"><div style="font-size:14.5px;line-height:1.7;color:var(--ink-2)">不挑岗位的话,也可以把你攒的 <b>'+state.entries.length+' 条真东西</b>,合成一份通用简历项目段 + 面试深挖回溯——全部来自你真实填的,经得起追问。</div>'+
-   '<div class="jdrow" style="margin-top:10px"><label>简历段总字数上限</label><input type="number" id="exLimit" min="60" max="600" value="'+exlim+'"><span class="jdunit">字</span></div>'+
+   '<div class="jdrow" style="margin-top:10px"><label>简历段总字数上限</label><input type="number" id="exLimit" min="60" max="900" value="'+exlim+'"><span class="jdunit">字</span></div>'+
    '<div class="btnrow"><button class="btn" id="goExport"'+(can?'':' disabled')+'>'+(state.showExport?"重新生成":"生成通用简历 + 面试深挖")+'</button>'+(can?'':'<span class="hint">先去「今日投喂」记几条</span>')+'</div></div>';
  var body="";
  if(state.showExport&&can){
