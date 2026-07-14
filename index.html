@@ -853,7 +853,7 @@ function loadDemoData(){
  state.entries=arr;persist();
 }
 function loadAI(){try{var r=JSON.parse(localStorage.getItem(AKEY)||"{}");state.apiKey=r.key||"";state.useAI=!!r.use;state.lang=(r.lang==="en"?"en":"zh");}catch(e){state.apiKey="";state.useAI=false;state.lang="zh";}
- if(!state.apiKey&&BUILTIN_KEY){state.apiKey=BUILTIN_KEY;state.useAI=true;}}
+ if(!state.apiKey&&BUILTIN_KEY){state.apiKey=BUILTIN_KEY;state.useAI=true;}if(!state.apiKey&&PROXY_URL){state.useAI=true;}}
 function persistAI(){try{localStorage.setItem(AKEY,JSON.stringify({key:state.apiKey,use:state.useAI,lang:state.lang}));}catch(e){}}
 /* 调用 DeepSeek(OpenAI 兼容)把四段回答翻译成一条结果导向的简历 bullet。key 仅存在本机 localStorage,不写进文件。 */
 function translateAI(f){
@@ -877,7 +877,7 @@ function jdTailor(){
  if(!jd){toast("先把目标岗位 JD 粘进来");return;}
  var lim=Math.max(40,Math.min(400,parseInt(val("jdLimit"),10)||150));
  state.jd=jd;state.jdLimit=lim;
- if(!(state.useAI&&state.apiKey)){toast("AI 未开启,无法按 JD 定制");return;}
+ if(!(state.useAI&&(state.apiKey||PROXY_URL))){toast("AI 未开启,无法按 JD 定制");return;}
  state.jdBusy=true;renderExport();
  var exp=state.entries.map(function(e,i){return (i+1)+". "+e.bullet+(e.q4?(" |真实结果:"+e.q4):"");}).join("\n");
  jdTailorAI(jd,lim,exp).then(function(r){state.jdResult=r;state.jdBusy=false;renderExport();})
@@ -918,7 +918,7 @@ function exSynth(){
  if(!state.entries.length){toast("先去攒几条记录");return;}
  var e2=document.getElementById("exLimit");if(e2)state.exLimit=Math.max(60,Math.min(600,parseInt(e2.value,10)||200));
  state.showExport=true;
- if(!(state.useAI&&state.apiKey)){state.exResult=localSynth(state.exLimit);renderExport();return;}
+ if(!(state.useAI&&(state.apiKey||PROXY_URL))){state.exResult=localSynth(state.exLimit);renderExport();return;}
  state.exBusy=true;state.exResult=null;renderExport();
  var recs=state.entries.map(function(e,i){return (i+1)+". "+e.bullet+(e.q4?(" |真实结果:"+e.q4):"");}).join("\n");
  exSynthAI(recs,state.exLimit).then(function(r){state.exResult=r;state.exBusy=false;renderExport();})
@@ -1061,7 +1061,7 @@ function renderToday(){
    '<div class="dout">产出的竞品对比矩阵被采纳进团队定价决策——系统梳理 6 家竞品定价策略,按档位与权益维度拆解为结构化对比。</div></div>';
  var now=new Date();var wk=["日","一","二","三","四","五","六"][now.getDay()];
  var dateStr=now.getFullYear()+" 年 "+(now.getMonth()+1)+" 月 "+now.getDate()+" 日 · 周"+wk;
- var aiOn=state.useAI&&state.apiKey;
+ var aiOn=state.useAI&&(state.apiKey||PROXY_URL);
  var demo=demoMode();
  var setHtml=(demo&&state.showSet)?'<div class="setpanel">'+
    '<div class="sethd">🤖 AI 翻译(DeepSeek)<span class="setpill '+(aiOn?'on':'off')+'">'+(aiOn?'已开启':'未开启 · 用本地规则')+'</span></div>'+
@@ -1097,7 +1097,7 @@ function renderToday(){
  var fr=document.getElementById("forceRare");if(fr)fr.addEventListener("click",function(){state.forceRare=true;toast("已锁定:下一条投喂必出 0.1% 隐藏款 🌟 去点「投喂锦鲤」");});
  var dn=document.getElementById("demoNai");if(dn)dn.addEventListener("click",demoNailong);
  var st=document.getElementById("setToggle");if(st)st.addEventListener("click",function(){state.showSet=!state.showSet;renderToday();});
- var ss=document.getElementById("setSave");if(ss)ss.addEventListener("click",function(){state.apiKey=val("setKey").trim();state.useAI=document.getElementById("setUse").checked;persistAI();renderToday();toast(state.useAI&&state.apiKey?"已开启 AI 翻译":(state.useAI?"勾了 AI 但没填 Key,先用本地规则":"已保存,使用本地规则"));});
+ var ss=document.getElementById("setSave");if(ss)ss.addEventListener("click",function(){state.apiKey=val("setKey").trim();state.useAI=document.getElementById("setUse").checked;persistAI();renderToday();toast(state.useAI&&(state.apiKey||PROXY_URL)?"已开启 AI 翻译":(state.useAI?"勾了 AI 但没填 Key,先用本地规则":"已保存,使用本地规则"));});
  var sc=document.getElementById("setClr");if(sc)sc.addEventListener("click",function(){state.apiKey="";state.useAI=false;persistAI();renderToday();toast("已清除 Key");});
  var ce=document.getElementById("cancelEdit");if(ce)ce.addEventListener("click",function(){state.editing=null;renderToday();});
  var cb=document.getElementById("copyBl");if(cb)cb.addEventListener("click",function(){copyText(state.result.bullet);});
@@ -1175,7 +1175,7 @@ function doTranslate(){
   state.result={bullet:bullet,tip:tip,msg:msg,name:nm,rare:rare?true:false};
   state.busy=false;persist();syncStats();renderToday();
  }
- if(state.useAI&&state.apiKey){
+ if(state.useAI&&(state.apiKey||PROXY_URL)){
   translateAI(f).then(finish).catch(function(err){toast("AI 翻译失败,已用本地规则兜底("+(err&&err.message||"网络错误")+")");finish(translateLocal(f));});
  }else{
   setTimeout(function(){finish(translateLocal(f));},550);
@@ -1664,6 +1664,94 @@ syncStats();render();
 if(!unlocked())openGate();
 </script>
 <!-- 访问统计:VerCount(不蒜子兼容,国内可达),后台 stat.html 读取 -->
+<style>
+#pond.bear{background:#fbf6ef!important}
+#pond.bear .koi{height:auto!important;overflow:visible!important;display:flex;align-items:flex-end;justify-content:center}
+#pond.bear .koi svg{width:118px;height:auto}
+</style>
+<script>
+(function(){
+ var TKEY="shixi-koi-theme";
+ function getMap(){try{return JSON.parse(localStorage.getItem(TKEY)||"{}");}catch(e){return {};}}
+ function ac(){try{return (typeof activeCode==="function"?activeCode():"")||"";}catch(e){return "";}}
+ function getTheme(){return getMap()[ac()]||"koi";}
+ function ensureTheme(){
+  if(typeof PROXY_URL==="undefined"||!PROXY_URL)return;
+  var c=ac();if(!c)return;var m=getMap();if(m[c])return;
+  fetch(PROXY_URL.replace(/\/$/,"")+"/quota?code="+encodeURIComponent(c))
+   .then(function(r){return r.json();})
+   .then(function(j){if(j&&j.theme){m[c]=j.theme;try{localStorage.setItem(TKEY,JSON.stringify(m));}catch(e){}
+     if(j.theme==="bear"){try{renderKoi();}catch(e){}try{render();}catch(e){}}}})
+   .catch(function(){});
+ }
+
+ var BLV=[
+  {n:"熊宝宝",min:0,a:[]},
+  {n:"腮红熊",min:2,a:["blush"]},
+  {n:"眼镜熊",min:4,a:["blush","glasses"]},
+  {n:"蝴蝶结熊",min:7,a:["blush","glasses","bow"]},
+  {n:"围巾熊",min:10,a:["blush","glasses","bow","scarf"]},
+  {n:"围裙熊",min:14,a:["blush","glasses","bow","scarf","apron"]},
+  {n:"草帽熊",min:18,a:["blush","glasses","scarf","apron","strawhat"]},
+  {n:"星星熊",min:23,a:["blush","glasses","scarf","apron","strawhat","stars"]},
+  {n:"棒棒糖熊",min:28,a:["blush","glasses","scarf","apron","strawhat","stars","hold"]},
+  {n:"皇冠熊",min:34,a:["blush","glasses","scarf","apron","stars","hold","crown"]},
+  {n:"光环熊",min:40,a:["halo","blush","glasses","scarf","apron","stars","hold","crown"]},
+  {n:"满级顶配熊",min:50,a:["halo","blush","glasses","scarf","apron","stars","hold","crown","sparkles"]}
+ ];
+ var BZ=["apron","scarf","hold","blush","glasses","bow","strawhat","crown","stars","sparkles"];
+ var _bid=0;
+ function bbase(id){return '<defs><radialGradient id="'+id+'" cx="40%" cy="32%" r="78%"><stop offset="0%" stop-color="#fff"/><stop offset="55%" stop-color="#fafafa"/><stop offset="100%" stop-color="#e2e2e2"/></radialGradient></defs>'+
+  '<ellipse cx="256" cy="86" rx="24" ry="30" fill="url(#'+id+')" stroke="#d9d9d9" transform="rotate(-18 256 86)"/>'+
+  '<ellipse cx="424" cy="86" rx="24" ry="30" fill="url(#'+id+')" stroke="#d9d9d9" transform="rotate(18 424 86)"/>'+
+  '<ellipse cx="270" cy="298" rx="15" ry="22" fill="url(#'+id+')" stroke="#dcdcdc" transform="rotate(22 270 298)"/>'+
+  '<ellipse cx="410" cy="298" rx="15" ry="22" fill="url(#'+id+')" stroke="#dcdcdc" transform="rotate(-22 410 298)"/>'+
+  '<ellipse cx="315" cy="392" rx="19" ry="15" fill="url(#'+id+')" stroke="#dcdcdc"/>'+
+  '<ellipse cx="365" cy="392" rx="19" ry="15" fill="url(#'+id+')" stroke="#dcdcdc"/>'+
+  '<path d="M302 250 C274 278 272 334 288 372 C300 396 380 396 392 372 C408 334 406 278 378 250 Z" fill="url(#'+id+')" stroke="#dcdcdc"/>'+
+  '<ellipse cx="340" cy="168" rx="116" ry="108" fill="url(#'+id+')" stroke="#dcdcdc"/>'+
+  '<circle cx="311" cy="176" r="8.5" fill="#1b1b1b"/><circle cx="369" cy="176" r="8.5" fill="#1b1b1b"/>'+
+  '<path d="M331 199 Q340 194 349 199 Q345 211 340 214 Q335 211 331 199 Z" fill="#1b1b1b"/>'+
+  '<path d="M324 216 Q332 226 340 218 Q348 226 356 216" fill="none" stroke="#1b1b1b" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>';}
+ var bacc={
+  halo:'<ellipse cx="340" cy="166" rx="134" ry="126" fill="none" stroke="#F7D98A" stroke-width="7" opacity="0.8"/>',
+  apron:'<path d="M300 298 h80 v54 q-40 16 -80 0 z" fill="#5B7DA6"/><rect x="322" y="316" width="36" height="26" rx="3" fill="#48678d"/><path d="M312 300 L326 274 M368 300 L354 274" stroke="#5B7DA6" stroke-width="7" stroke-linecap="round"/>',
+  scarf:'<path d="M276 244 Q340 276 404 244 L412 268 Q340 300 268 268 Z" fill="#E06666"/><path d="M392 262 L408 300 L390 304 L380 268 Z" fill="#D65454"/>',
+  hold:'<circle cx="436" cy="300" r="15" fill="#F2A0B4" stroke="#E8748F" stroke-width="2"/><path d="M430 296 a7 7 0 0 1 12 4" fill="none" stroke="#fff" stroke-width="2.4"/><rect x="433" y="312" width="6" height="26" rx="3" fill="#D8A38E"/>',
+  blush:'<ellipse cx="282" cy="196" rx="15" ry="9" fill="#FBC4D2" opacity="0.8"/><ellipse cx="398" cy="196" rx="15" ry="9" fill="#FBC4D2" opacity="0.8"/>',
+  glasses:'<ellipse cx="311" cy="176" rx="28" ry="26" fill="#ffffff08" stroke="#d64545" stroke-width="7"/><ellipse cx="369" cy="176" rx="28" ry="26" fill="#ffffff08" stroke="#d64545" stroke-width="7"/><path d="M338 174 h4" stroke="#d64545" stroke-width="7"/><path d="M283 170 l-18 -6" stroke="#d64545" stroke-width="7" stroke-linecap="round"/><path d="M397 170 l18 -6" stroke="#d64545" stroke-width="7" stroke-linecap="round"/>',
+  bow:'<path d="M340 56 L316 42 L316 72 Z" fill="#F2A0B4"/><path d="M340 56 L364 42 L364 72 Z" fill="#F2A0B4"/><circle cx="340" cy="57" r="8" fill="#E8748F"/>',
+  strawhat:'<ellipse cx="340" cy="84" rx="95" ry="21" fill="#DDBA72"/><ellipse cx="340" cy="80" rx="95" ry="19" fill="#EDD290"/><path d="M296 82 Q300 36 340 34 Q380 36 384 82 Z" fill="#E4C57C"/><path d="M302 82 Q306 44 340 40 Q374 44 378 82 Z" fill="#F2DA9E"/><path d="M296 76 Q340 88 384 76 L384 84 Q340 96 296 84 Z" fill="#CE6E6E"/><path d="M366 78 l16 -8 -3 18 z" fill="#B95B5B"/>',
+  crown:'<path d="M298 66 L298 38 L318 58 L340 30 L362 58 L382 38 L382 66 Z" fill="#F2C879" stroke="#E0A94A" stroke-width="2.5" stroke-linejoin="round"/><circle cx="340" cy="50" r="4" fill="#E85470"/><circle cx="304" cy="52" r="3" fill="#6FB0C9"/><circle cx="376" cy="52" r="3" fill="#6FB0C9"/>',
+  stars:'<path d="M236 128 l4 10 10 4 -10 4 -4 10 -4-10 -10-4 10-4z" fill="#F2C879"/><path d="M448 142 l3 8 8 3 -8 3 -3 8 -3-8 -8-3 8-3z" fill="#F2C879"/>',
+  sparkles:'<path d="M232 210 l3 8 8 3 -8 3 -3 8 -3-8 -8-3 8-3z" fill="#F2C879"/><path d="M452 210 l3 8 8 3 -8 3 -3 8 -3-8 -8-3 8-3z" fill="#F2C879"/><path d="M340 26 l3 7 7 3 -7 3 -3 7 -3-7 -7-3 7-3z" fill="#F2C879"/>'
+ };
+ function bgroup(i){var lv=BLV[Math.max(0,Math.min(BLV.length-1,i))];var id="bf"+(_bid++);
+  var back=lv.a.indexOf("halo")>=0?bacc.halo:"";
+  var front=BZ.filter(function(k){return lv.a.indexOf(k)>=0;}).map(function(k){return bacc[k];}).join("");
+  return back+bbase(id)+front;}
+ function bhero(i){return '<svg viewBox="0 0 680 430" style="display:block">'+bgroup(i)+'</svg>';}
+ function bmini(lv){lv=Math.max(0,Math.min(BLV.length-1,lv));return '<svg viewBox="0 0 680 430" width="22" height="14" style="display:inline-block;vertical-align:middle">'+bgroup(lv)+'</svg>';}
+
+ function renderBearHero(){
+  var n=state.entries.length,i=(typeof koiLevel==="function"?koiLevel(n):0),cur=BLV[i],nx=BLV[i+1];
+  var pond=document.getElementById("pond");if(pond)pond.className="pond bear lv"+(i+1);
+  var kw=document.querySelector("#pond .koi");if(kw)kw.innerHTML=bhero(i);
+  var el=document.getElementById("koilv");if(!el)return;
+  var pct,nextLine;
+  if(nx){var span=nx.min-cur.min,done=n-cur.min;pct=Math.max(7,Math.round(done/span*100));nextLine="再 "+(nx.min-n)+" 条进阶「"+nx.n+"」";}
+  else{pct=100;nextLine="已满级 · 顶配熊 ✨";}
+  el.innerHTML='<div class="klvtop"><span class="klvbadge'+(nx?"":" max")+'">Lv.'+(i+1)+" "+cur.n+'</span><span class="klvnext">'+nextLine+'</span></div><div class="klvtrack"><div class="klvfill" style="width:'+pct+'%"></div></div>';
+ }
+
+ if(typeof renderKoi==="function"){var _rk=renderKoi;renderKoi=function(){try{ensureTheme();}catch(e){}
+   if(getTheme()==="bear"){try{return renderBearHero();}catch(e){}}return _rk.apply(this,arguments);};}
+ if(typeof miniKoi==="function"){var _mk=miniKoi;miniKoi=function(lv){
+   if(getTheme()==="bear"){try{return bmini(lv);}catch(e){}}return _mk.apply(this,arguments);};}
+ try{ensureTheme();}catch(e){}
+})();
+</script>
+
 <script defer src="https://cn.vercount.one/js"></script>
 </body>
 </html>
