@@ -1668,21 +1668,34 @@ if(!unlocked())openGate();
 #pond.bear{background:#fbf6ef!important}
 #pond.bear .koi{height:auto!important;overflow:visible!important;display:flex;align-items:flex-end;justify-content:center}
 #pond.bear .koi svg{width:118px;height:auto}
+#bearThemeSwitch{position:fixed;right:12px;bottom:14px;z-index:99999;border:1px solid #e0d3b8;background:#fff;color:#8a6a2e;border-radius:22px;padding:7px 14px;font-size:13px;font-weight:600;box-shadow:0 2px 10px #00000026;cursor:pointer}
 </style>
 <script>
 (function(){
- var TKEY="shixi-koi-theme";
+ var TKEY="shixi-koi-theme", OKEY="shixi-koi-ovr";
  function getMap(){try{return JSON.parse(localStorage.getItem(TKEY)||"{}");}catch(e){return {};}}
+ function getOvr(){try{return JSON.parse(localStorage.getItem(OKEY)||"{}");}catch(e){return {};}}
  function ac(){try{return (typeof activeCode==="function"?activeCode():"")||"";}catch(e){return "";}}
- function getTheme(){return getMap()[ac()]||"koi";}
+ function entry(){var v=getMap()[ac()];if(!v)return null;if(typeof v==="string")return {t:v,i:false};return {t:v.t||"koi",i:!!v.i};}
+ function getTheme(){var o=getOvr()[ac()];if(o)return o;var e=entry();return (e&&e.t)||"koi";}
+ function getInternal(){var e=entry();return !!(e&&e.i);}
  function ensureTheme(){
   if(typeof PROXY_URL==="undefined"||!PROXY_URL)return;
-  var c=ac();if(!c)return;var m=getMap();if(m[c])return;
+  var c=ac();if(!c)return;var m=getMap();if(m[c]&&typeof m[c]==="object")return;
   fetch(PROXY_URL.replace(/\/$/,"")+"/quota?code="+encodeURIComponent(c))
    .then(function(r){return r.json();})
-   .then(function(j){if(j&&j.theme){m[c]=j.theme;try{localStorage.setItem(TKEY,JSON.stringify(m));}catch(e){}
-     if(j.theme==="bear"){try{renderKoi();}catch(e){}try{render();}catch(e){}}}})
+   .then(function(j){if(j&&j.theme){m[c]={t:j.theme,i:!!j.internal};try{localStorage.setItem(TKEY,JSON.stringify(m));}catch(e){}
+     try{renderKoi();}catch(e){}try{render();}catch(e){}try{ensureBtn();}catch(e){}}})
    .catch(function(){});
+ }
+ function toggle(){var o=getOvr();o[ac()]=(getTheme()==="bear"?"koi":"bear");try{localStorage.setItem(OKEY,JSON.stringify(o));}catch(e){}
+  try{renderKoi();}catch(e){}try{render();}catch(e){}ensureBtn();}
+ function ensureBtn(){
+  var id="bearThemeSwitch",ex=document.getElementById(id);
+  if(getInternal()){
+   if(!ex){ex=document.createElement("button");ex.id=id;ex.type="button";ex.onclick=function(){toggle();};if(document.body)document.body.appendChild(ex);}
+   ex.textContent=(getTheme()==="bear"?"🎏 切成锦鲤":"🐻 切成熊");ex.style.display="";
+  }else if(ex){ex.style.display="none";}
  }
 
  var BLV=[
@@ -1744,11 +1757,11 @@ if(!unlocked())openGate();
   el.innerHTML='<div class="klvtop"><span class="klvbadge'+(nx?"":" max")+'">Lv.'+(i+1)+" "+cur.n+'</span><span class="klvnext">'+nextLine+'</span></div><div class="klvtrack"><div class="klvfill" style="width:'+pct+'%"></div></div>';
  }
 
- if(typeof renderKoi==="function"){var _rk=renderKoi;renderKoi=function(){try{ensureTheme();}catch(e){}
+ if(typeof renderKoi==="function"){var _rk=renderKoi;renderKoi=function(){try{ensureTheme();}catch(e){}try{ensureBtn();}catch(e){}
    if(getTheme()==="bear"){try{return renderBearHero();}catch(e){}}return _rk.apply(this,arguments);};}
  if(typeof miniKoi==="function"){var _mk=miniKoi;miniKoi=function(lv){
    if(getTheme()==="bear"){try{return bmini(lv);}catch(e){}}return _mk.apply(this,arguments);};}
- try{ensureTheme();}catch(e){}
+ try{ensureTheme();}catch(e){}try{ensureBtn();}catch(e){}
 })();
 </script>
 
