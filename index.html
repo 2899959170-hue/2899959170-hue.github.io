@@ -1692,7 +1692,7 @@ if(!unlocked())openGate();
   try{renderKoi();}catch(e){}try{render();}catch(e){}ensureBtn();}
  function ensureBtn(){
   var id="bearThemeSwitch",ex=document.getElementById(id);
-  if(getInternal()){
+  if(ac()){
    if(!ex){ex=document.createElement("button");ex.id=id;ex.type="button";ex.onclick=function(){toggle();};if(document.body)document.body.appendChild(ex);}
    ex.textContent=(getTheme()==="bear"?"🎏 切成锦鲤":"🐻 切成熊");ex.style.display="";
   }else if(ex){ex.style.display="none";}
