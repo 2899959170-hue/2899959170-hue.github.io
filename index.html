@@ -396,6 +396,12 @@ textarea::placeholder{color:var(--dim);}
 .gfree{display:inline-block;font-size:11px;font-weight:700;color:var(--sage);background:var(--sage-bg);
   border:1px solid var(--sage-line);border-radius:20px;padding:4px 12px;margin-top:12px;}
 .gnote{font-size:11.5px;color:var(--dim);line-height:1.65;margin-top:12px;}
+.ghookwrap{margin-top:16px;padding-top:16px;border-top:1px dashed var(--border-strong);}
+.ghookbtn{display:block;padding:13px 18px;border-radius:14px;text-decoration:none;text-align:center;line-height:1.45;
+  background:linear-gradient(135deg,#8FB06B 0%,#6E9450 100%);color:#fff;font-size:14.5px;font-weight:800;
+  box-shadow:0 10px 22px -8px rgba(110,148,80,.55);transition:filter .15s;}
+.ghookbtn:hover{filter:brightness(1.05);}
+.ghookbtn span{display:block;font-size:12px;font-weight:600;opacity:.9;margin-top:3px;}
 #codeBtn{font-size:17px;padding:17px 24px;border-radius:14px;letter-spacing:1px;
   background:linear-gradient(135deg,#F2845C 0%,var(--koi) 55%,var(--koi-deep) 100%);
   box-shadow:0 12px 26px -8px rgba(224,105,74,.75);animation:codepulse 1.9s ease-in-out infinite;}
@@ -569,7 +575,9 @@ textarea::placeholder{color:var(--dim);}
       <button class="btn" id="codeBtn" style="width:100%;margin-top:14px">解锁我的简历池 🧧</button>
       <div id="codeErr" class="gerr"></div>
       <div class="gnote">之所以要个邀请码,是为了防止有人用程序盗刷我的 token~ 给大家添了点小麻烦啦,抱抱 🫶<br><br>邀请码 = 你们的账号,数据存在你自己手机本地,不会丢(我没做手机号注册,所以靠它认人)。<br><b>记得一定要用浏览器打开!不要在微信里打开哦!</b>只需要填一次,以后再来就自动进啦~</div>
-      <a class="ghook" href="https://work.weixin.qq.com/ca/cawcdecd5308b30992" target="_blank" rel="noopener">还没有邀请码?<br><b>点我找作者 · 回复「上岸」免费领 →</b></a>
+      <div class="ghookwrap">
+        <a class="ghookbtn" href="https://work.weixin.qq.com/ca/cawcdecd5308b30992" target="_blank" rel="noopener">🧧 点击此处免费领取邀请码<span>解锁我的简历池 →</span></a>
+      </div>
     </div>
   </div>
 </div>
