@@ -861,7 +861,7 @@ function loadDemoData(){
  state.entries=arr;persist();
 }
 function loadAI(){try{var r=JSON.parse(localStorage.getItem(AKEY)||"{}");state.apiKey=r.key||"";state.useAI=!!r.use;state.lang=(r.lang==="en"?"en":"zh");}catch(e){state.apiKey="";state.useAI=false;state.lang="zh";}
- if(!state.apiKey&&BUILTIN_KEY){state.apiKey=BUILTIN_KEY;state.useAI=true;}if(!state.apiKey&&PROXY_URL){state.useAI=true;}}
+ if(!state.apiKey&&BUILTIN_KEY){state.apiKey=BUILTIN_KEY;state.useAI=true;}if(PROXY_URL){state.useAI=true;}}
 function persistAI(){try{localStorage.setItem(AKEY,JSON.stringify({key:state.apiKey,use:state.useAI,lang:state.lang}));}catch(e){}}
 /* 调用 DeepSeek(OpenAI 兼容)把四段回答翻译成一条结果导向的简历 bullet。key 仅存在本机 localStorage,不写进文件。 */
 function translateAI(f){
