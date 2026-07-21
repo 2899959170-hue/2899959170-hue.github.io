@@ -841,8 +841,10 @@ var AKEY="shixi-fanyiji-ai-v1";
 var BUILTIN_KEY="";
 /* 后端代理:填了就走代理(key 藏后端、前端不暴露);留空=前端直连 BUILTIN_KEY */
 var PROXY_URL="https://shixigongju-d0ganse56994b4a81-1454002879.ap-shanghai.app.tcloudbase.com/api";
+/* 每台设备一个稳定的随机 ID:通用码场景下按设备单独算额度、单独计日活 */
+function deviceId(){try{var k="shixi-device-id",v=localStorage.getItem(k);if(!v){v=(Date.now().toString(36)+Math.random().toString(36).slice(2,10)+Math.random().toString(36).slice(2,6)).toUpperCase();localStorage.setItem(k,v);}return v;}catch(e){return "";}}
 function dsChat(b){
- if(PROXY_URL){return fetch(PROXY_URL,{method:"POST",headers:{"Content-Type":"application/json","X-Invite-Code":activeCode()},body:JSON.stringify(b)});}
+ if(PROXY_URL){return fetch(PROXY_URL,{method:"POST",headers:{"Content-Type":"application/json","X-Invite-Code":activeCode(),"X-Device-Id":deviceId()},body:JSON.stringify(b)});}
  return fetch("https://api.deepseek.com/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+state.apiKey},body:JSON.stringify(b)});
 }
 function load(){try{var r=localStorage.getItem(curSkey());if(r){var d=JSON.parse(r);state.entries=d.entries||[];state.signs=d.signs||[];}else{state.entries=[];state.signs=[];}}catch(e){state.entries=[];state.signs=[];}}
