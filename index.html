@@ -1184,7 +1184,10 @@ function doTranslate(){
   state.busy=false;persist();syncStats();renderToday();
  }
  if(state.useAI&&(state.apiKey||PROXY_URL)){
-  translateAI(f).then(finish).catch(function(err){toast("AI 翻译失败,已用本地规则兜底("+(err&&err.message||"网络错误")+")");finish(translateLocal(f));});
+  translateAI(f).then(finish).catch(function(err){state.busy=false;renderToday();var m=(err&&err.message)||"";
+   if(/429/.test(m))toast("今天这个码的翻译次数用完啦,明天再来~(多人共用会更快用完)");
+   else if(/403/.test(m))toast("邀请码在新版无效,找作者换个有效码就好啦~");
+   else toast("网络不太稳,喝口水稍等再试一下~");});
  }else{
   setTimeout(function(){finish(translateLocal(f));},550);
  }
