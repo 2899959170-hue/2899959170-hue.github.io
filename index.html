@@ -847,7 +847,8 @@ function dsChat(b){
  if(PROXY_URL){return fetch(PROXY_URL,{method:"POST",headers:{"Content-Type":"application/json","X-Invite-Code":activeCode(),"X-Device-Id":deviceId()},body:JSON.stringify(b)});}
  return fetch("https://api.deepseek.com/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+state.apiKey},body:JSON.stringify(b)});
 }
-function load(){try{var r=localStorage.getItem(curSkey());if(r){var d=JSON.parse(r);state.entries=d.entries||[];state.signs=d.signs||[];}else{state.entries=[];state.signs=[];}}catch(e){state.entries=[];state.signs=[];}}
+function load(){try{var r=localStorage.getItem(curSkey());if(r){var d=JSON.parse(r);state.entries=d.entries||[];state.signs=d.signs||[];}else{state.entries=[];state.signs=[];}}catch(e){state.entries=[];state.signs=[];}
+ try{var _dr=localStorage.getItem("shixi-koi-draft");if(_dr&&!state.editing){var _d=JSON.parse(_dr);if(_d&&(_d.q1||_d.q2||_d.q3||_d.q4))state.draft=_d;}}catch(e){}}
 function persist(){try{localStorage.setItem(curSkey(),JSON.stringify({entries:state.entries,signs:state.signs}));}catch(e){}}
 var RARE_SIGN="万分之一签";
 function recordSign(s){if(!s)return;if(!state.signs)state.signs=[];if(state.signs.indexOf(s)<0)state.signs.push(s);}
@@ -1093,13 +1094,14 @@ function renderToday(){
     '<div class="askflag" id="askflag"'+(v.q2?' style="display:none"':'')+'><b>去问一句 →</b><span>明天逮个空问 mentor:"我做的这块,是整个项目里的哪一环?" 这栏空着,翻译就缺了最值钱的一半。</span></div></div>'+
    '<div class="q"><div class="qlabel"><span class="qnum">03</span>你当时怎么想的?卡在哪?试了几种办法?</div><textarea id="q3" rows="2" placeholder="这部分你三个月后一定忘,所以现在写。">'+esc(v.q3)+'</textarea></div>'+
    '<div class="q"><div class="qlabel"><span class="qnum">04</span>最后交出去什么?带来了什么变化或数字?</div><textarea id="q4" rows="2" placeholder="没数字也行,写清\'之前怎样、之后怎样\'。">'+esc(v.q4)+'</textarea></div>'+
-   '<div class="btnrow"><button class="btn" id="goTranslate">'+(state.busy?(aiOn?"AI 翻译中…":"投喂中…"):(state.editing?"保存修改":"投喂锦鲤 · 翻译成简历"))+'</button><span class="hint">'+(aiOn?"AI 翻译 · ":"")+"≈ 90 秒 / 天</span></div>"+
+   '<div class="btnrow"><button class="btn" id="goTranslate">'+(state.busy?(aiOn?"AI 翻译中…":"投喂中…"):(state.editing?"保存修改":"投喂锦鲤 · 翻译成简历"))+'</button>'+(state.editing?"":'<button id="saveDraft" type="button" style="background:#fff;border:1px solid var(--koi-line,#e6cbb8);color:var(--koi-deep,#c24e32);border-radius:12px;padding:0 15px;font-weight:600;font-size:14px;white-space:nowrap;cursor:pointer">💾 先存着</button>')+'<span class="hint">'+(aiOn?"AI 翻译 · ":"")+"≈ 90 秒 / 天</span></div>"+
   '</div>'+resultHtml+
   '<div class="sec"><div class="sechead"><span>已攒下的真东西</span><span class="cnt">'+state.entries.length+' 条</span></div>'+tl+'</div>';
 
  var q2=document.getElementById("q2");
  q2.addEventListener("input",function(){document.getElementById("askflag").style.display=q2.value.trim()?"none":"flex";});
  document.getElementById("goTranslate").addEventListener("click",doTranslate);
+ var sdb=document.getElementById("saveDraft");if(sdb)sdb.addEventListener("click",saveDraft);
  var lz=document.getElementById("langZh");if(lz)lz.addEventListener("click",function(){if(state.lang!=="zh"){state.lang="zh";persistAI();renderToday();toast("简历输出已切到中文");}});
  var le=document.getElementById("langEn");if(le)le.addEventListener("click",function(){if(state.lang!=="en"){state.lang="en";persistAI();renderToday();toast("Resume output switched to English");}});
  var df=document.getElementById("demoFill");if(df)df.addEventListener("click",demoFill);
@@ -1153,9 +1155,20 @@ function buildCalendar(){
  return h;
 }
 
+var DRAFTK="shixi-koi-draft";
+function saveDraftLocal(f){try{localStorage.setItem(DRAFTK,JSON.stringify(f));}catch(e){}}
+function clearDraftLocal(){try{localStorage.removeItem(DRAFTK);}catch(e){}}
+/* 「先存着」:把当前填的内容存到本地,关掉页面也不丢,回来自动带出 */
+function saveDraft(){
+ var f={q1:val("q1"),q2:val("q2"),q3:val("q3"),q4:val("q4")};
+ if(!(f.q1.trim()||f.q2.trim()||f.q3.trim()||f.q4.trim())){toast("还没填东西呢~");return;}
+ state.draft=f;saveDraftLocal(f);
+ toast("已存好啦~ 关掉页面也不会丢,回来接着填就行 💾");
+}
 function doTranslate(){
  var f={q1:val("q1"),q2:val("q2"),q3:val("q3"),q4:val("q4")};
  if(!f.q1.trim()){toast("先写一句今天做了啥");return;}
+ if(!state.editing){state.draft=f;saveDraftLocal(f);} // 存成草稿(内存+本地),翻译失败/重渲染/关页面都不丢
  state.busy=true;renderToday();
  function finish(bullet){
   // AI 判定信息太少:不硬编,提示补充,不入池
@@ -1165,7 +1178,7 @@ function doTranslate(){
    return;}
   var tip=f.q2.trim()?"想更值钱,下次补个具体数字。":"这条还缺「全局位置」——明天问一句 mentor,它会更扛追问。";
   if(state.editing){var e=findEntry(state.editing);if(e){e.q1=f.q1;e.q2=f.q2;e.q3=f.q3;e.q4=f.q4;e.bullet=bullet;}state.editing=null;state.busy=false;persist();syncStats();renderToday();toast("已更新这条");return;}
-  state.draft=null;
+  state.draft=null;clearDraftLocal();
   var prevLv=koiLevel(state.entries.length);
   state.entries.unshift({id:uid(),q1:f.q1,q2:f.q2,q3:f.q3,q4:f.q4,bullet:bullet,ts:Date.now()});
   var newLv=koiLevel(state.entries.length);
@@ -1186,10 +1199,15 @@ function doTranslate(){
   state.busy=false;persist();syncStats();renderToday();
  }
  if(state.useAI&&(state.apiKey||PROXY_URL)){
-  translateAI(f).then(finish).catch(function(err){state.busy=false;renderToday();var m=(err&&err.message)||"";
-   if(/429/.test(m))toast("今天这个码的翻译次数用完啦,明天再来~(多人共用会更快用完)");
-   else if(/403/.test(m))toast("邀请码在新版无效,找作者换个有效码就好啦~");
-   else toast("网络不太稳,喝口水稍等再试一下~");});
+  var attempt=function(n){
+   var timed=new Promise(function(_,rej){setTimeout(function(){rej(new Error("TIMEOUT"));},30000);});
+   Promise.race([translateAI(f),timed]).then(finish).catch(function(err){var m=(err&&err.message)||"";
+    if(/429/.test(m)){state.busy=false;renderToday();toast("今天这个码的翻译次数用完啦,明天再来~(多人共用会更快用完)");return;}
+    if(/403/.test(m)){state.busy=false;renderToday();toast("邀请码在新版无效,找作者换个有效码就好啦~");return;}
+    if(n>0){setTimeout(function(){attempt(n-1);},1200);return;} // 网络/超时 → 自动重试一次
+    state.busy=false;renderToday();toast("网络不太稳,这次没成~ 你填的内容我给你留着了,喝口水再点一次「翻译」就行 🫶");});
+  };
+  attempt(1);
  }else{
   setTimeout(function(){finish(translateLocal(f));},550);
  }
