@@ -211,6 +211,8 @@ textarea::placeholder{color:var(--dim);}
 .ekap{margin-top:8px;padding:9px 11px;background:var(--koi-bg,#fdf1ea);border:1px solid var(--koi-line,#f0d9cc);border-radius:10px;font-size:12.5px;line-height:1.6;color:var(--ink-2,#6b5d4f);}
 .ekap>b{color:var(--koi-deep,#c24e32);}
 .ekmemo{margin-top:5px;font-size:11px;color:var(--dim,#a99a8c);line-height:1.5;}
+.qdatetag{font-size:11px;color:var(--dim,#a99a8c);font-weight:400;margin-left:8px;}
+#entryDate{margin-top:6px;font-size:14px;padding:9px 11px;border:1px solid var(--border,#ece3d5);border-radius:10px;background:var(--surface,#fff);color:var(--ink,#2b2722);font-family:inherit;max-width:180px;}
 .kaphd{margin:4px 0 14px;}
 .kaptitle{font-size:19px;font-weight:800;color:var(--ink,#2b2722);}
 .kapsub{font-size:12.5px;color:var(--muted,#8a7d6d);line-height:1.7;margin-top:7px;}
@@ -993,6 +995,7 @@ function esc(s){return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replac
 function fmt(ts){var d=new Date(ts);return (d.getMonth()+1)+"/"+("0"+d.getDate()).slice(-2);}
 function sod(ts){var d=new Date(ts);d.setHours(0,0,0,0);return d.getTime();}
 function dkey(ts){var d=new Date(ts);return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();}
+function ymd(ts){var d=new Date(ts);return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2);}
 function firstTs(){if(!state.entries.length)return Date.now();var min=state.entries[0].ts;for(var i=0;i<state.entries.length;i++)if(state.entries[i].ts<min)min=state.entries[i].ts;return min;}
 function dayNo(e){return Math.max(1,Math.round((sod(e.ts)-sod(firstTs()))/DAY)+1);}
 function byDay(){var m={};for(var i=0;i<state.entries.length;i++){var k=dkey(state.entries[i].ts);(m[k]=m[k]||[]).push(state.entries[i]);}return m;}
@@ -1109,6 +1112,7 @@ function renderToday(){
   setHtml+
   demoEx+
   '<div class="card">'+editbar+
+   '<div class="q qdate"><div class="qlabel"><span class="qnum">📅</span>哪天做的?<span class="qdatetag">默认今天 · 可补前几天</span></div><input type="date" id="entryDate" value="'+(ed&&ed.ts?ymd(ed.ts):ymd(Date.now()))+'" max="'+ymd(Date.now())+'"></div>'+
    '<div class="q"><div class="qlabel"><span class="qnum">01</span>今天他们让你具体做了啥?</div><textarea id="q1" rows="2" placeholder="一句话,别美化。">'+esc(v.q1)+'</textarea></div>'+
    '<div class="q"><div class="qlabel"><span class="qnum">02</span>这事在整个项目里是哪一环?为了解决什么?</div><textarea id="q2" rows="2" placeholder="不知道?那这就是今天最该搞清的。">'+esc(v.q2)+'</textarea>'+
     '<div class="askflag" id="askflag"'+(v.q2?' style="display:none"':'')+'><b>去问一句 →</b><span>明天逮个空问 mentor:"我做的这块,是整个项目里的哪一环?" 这栏空着,翻译就缺了最值钱的一半。</span></div></div>'+
@@ -1187,9 +1191,17 @@ function saveDraft(){
  state.draft=f;saveDraftLocal(f);
  toast("已存好啦~ 关掉页面也不会丢,回来接着填就行 💾");
 }
+/* 把选的日期转成时间戳:选今天=用当前时刻(保证当天排序),补前几天=那天中午12点 */
+function parseEntryDate(dstr){
+ if(!dstr||dstr===ymd(Date.now()))return Date.now();
+ var p=dstr.split("-");if(p.length!==3)return Date.now();
+ var d=new Date(+p[0],(+p[1])-1,+p[2],12,0,0);
+ return isNaN(d.getTime())?Date.now():d.getTime();
+}
 function doTranslate(){
  var f={q1:val("q1"),q2:val("q2"),q3:val("q3"),q4:val("q4")};
  if(!f.q1.trim()){toast("先写一句今天做了啥");return;}
+ var entryTs=parseEntryDate(val("entryDate")); // 补录:用选的那天
  if(!state.editing){state.draft=f;saveDraftLocal(f);} // 存成草稿(内存+本地),翻译失败/重渲染/关页面都不丢
  state.busy=true;renderToday();
  function finish(bullet){
@@ -1199,10 +1211,10 @@ function doTranslate(){
    toast("信息太少啦~ 把「做了什么」写具体一点(做了哪件事、对什么),锦鲤才不会瞎编 🐟");
    return;}
   var tip=f.q2.trim()?"想更值钱,下次补个具体数字。":"这条还缺「全局位置」——明天问一句 mentor,它会更扛追问。";
-  if(state.editing){var e=findEntry(state.editing);if(e){e.q1=f.q1;e.q2=f.q2;e.q3=f.q3;e.q4=f.q4;e.bullet=bullet;}state.editing=null;state.busy=false;persist();syncStats();renderToday();toast("已更新这条");return;}
+  if(state.editing){var e=findEntry(state.editing);if(e){e.q1=f.q1;e.q2=f.q2;e.q3=f.q3;e.q4=f.q4;e.bullet=bullet;e.ts=entryTs;}state.editing=null;state.busy=false;persist();syncStats();renderToday();toast("已更新这条");return;}
   state.draft=null;clearDraftLocal();
   var prevLv=koiLevel(state.entries.length);
-  state.entries.unshift({id:uid(),q1:f.q1,q2:f.q2,q3:f.q3,q4:f.q4,bullet:bullet,ts:Date.now()});
+  state.entries.unshift({id:uid(),q1:f.q1,q2:f.q2,q3:f.q3,q4:f.q4,bullet:bullet,ts:entryTs});
   var newLv=koiLevel(state.entries.length);
   var lvUp=newLv>prevLv;
   var mile=MILE[state.entries.length];
