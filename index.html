@@ -214,7 +214,9 @@ textarea::placeholder{color:var(--dim);}
 .kaphd{margin:4px 0 14px;}
 .kaptitle{font-size:19px;font-weight:800;color:var(--ink,#2b2722);}
 .kapsub{font-size:12.5px;color:var(--muted,#8a7d6d);line-height:1.7;margin-top:7px;}
-.kapcount{font-size:12px;color:var(--dim,#a99a8c);margin-bottom:10px;}
+.kapcount{font-size:12px;color:var(--dim,#a99a8c);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.kapcopy{background:var(--koi-deep,#c24e32);color:#fff;border:none;border-radius:20px;padding:7px 14px;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;}
+.kapcopy:hover{filter:brightness(1.05);}
 .kapempty{text-align:center;color:var(--muted,#8a7d6d);font-size:13.5px;line-height:1.9;padding:34px 16px;background:var(--surface-2,#faf5ee);border:1px dashed var(--border-strong,#e3d8c6);border-radius:14px;}
 .kapcard{background:var(--surface,#fff);border:1px solid var(--border,#ece3d5);border-radius:14px;padding:14px 15px;margin-bottom:12px;box-shadow:0 1px 3px rgba(43,39,34,.04);}
 .kaptask{font-size:14px;font-weight:700;color:var(--ink,#2b2722);line-height:1.5;margin-bottom:10px;}
@@ -1650,7 +1652,7 @@ function renderKapoint(){
   h+='<div class="kapempty">还没有卡点记录~<br>在「今日投喂」第 <b>③</b> 栏(你当时怎么想的?卡在哪?试了几种办法?)写下当时的难点,这里就会自动汇总成复盘表。</div>';
  }else{
   var arr=withKap.slice().sort(function(a,b){return b.ts-a.ts;});
-  h+='<div class="kapcount">共 '+arr.length+' 条卡点 · 按时间倒序</div>';
+  h+='<div class="kapcount">共 '+arr.length+' 条卡点 · 按时间倒序<button type="button" onclick="copyKapoint()" class="kapcopy">📋 一键复制全部 · 存手机备忘</button></div>';
   for(var i=0;i<arr.length;i++){var e=arr[i];
    h+='<div class="kapcard">'+
      '<div class="kaptask"><span class="kapday">'+fmt(e.ts)+'</span>'+esc(e.q1)+'</div>'+
@@ -1661,6 +1663,18 @@ function renderKapoint(){
   }
  }
  panel.innerHTML=h;
+}
+/* 一键复制全部卡点(纯文本,存手机备忘录面试前过一遍)*/
+function copyKapoint(){
+ var arr=state.entries.filter(function(e){return e.q3&&e.q3.trim();}).slice().sort(function(a,b){return b.ts-a.ts;});
+ if(!arr.length){toast("还没有卡点可复制~");return;}
+ var t="【卡点复盘 · 面试备忘】\n\n";
+ for(var i=0;i<arr.length;i++){var e=arr[i];
+  t+=(i+1)+". "+e.q1+"\n   🧗 卡点/思路:"+e.q3+"\n"+(e.q4?"   ✅ 结果:"+e.q4+"\n":"")+"\n";}
+ var done=function(){toast("已复制全部卡点~ 粘到手机备忘录,面试前过一遍 📋");};
+ var fail=function(){toast("复制失败,长按上面的文字手动选中复制吧");};
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done).catch(fail);}
+ else{try{var ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);done();}catch(e){fail();}}
 }
 
 document.getElementById("tabs").addEventListener("click",function(ev){
